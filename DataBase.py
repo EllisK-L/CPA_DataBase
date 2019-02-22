@@ -22,8 +22,6 @@ def openDoc():
     doc = open("Data.txt","r")
     data = doc.readlines()
     for i in range(len(data)):
-        data[i]= data[i]
-    for i in range(len(data)):
         data[i] = data[i].split("|")
         del data[i][len(data[i])-1]
     doc.close()
@@ -349,8 +347,6 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     oldFrame.destroy()
     newDetailFrame = Frame(root)
     newDetailFrame.grid(row=0,column=0,sticky=W)
-    detailBox = Listbox(newDetailFrame, relief="solid", width=115, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
-    detailBox.grid(row=3, columnspan=100)
     backButton = Button(newDetailFrame, text="Back", command=back)
     backButton.grid(row=0, column=0)
 
@@ -371,13 +367,16 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         tempSpace = "     "
     #TIme stamp, time due, Where is it, person responsible, tech signed out, quantity.
     #Header----------------------------------------------------
-    headerString = "Signed Out By" + "        "+"Person Responsible"+ "   "+"Where It Is"+"          "+temp+tempSpace+"Time Due"+"             "+"Quantity"
-    headerLabel = Label(newDetailFrame,text=headerString,font='TkFixedFont')
-    headerLabel.grid(row=2,columnspan=100,sticky=W)
+    
 #21 character in each
 
     boxString = ""
     if "Checked in" in line:
+        detailBox = Listbox(newDetailFrame, relief="solid", width=115, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
+        detailBox.grid(row=3, columnspan=100)
+        headerString = "Signed Out By" + "        "+"Person Responsible"+ "   "+"Where It Is"+"          "+temp+tempSpace+"Time Due"+"             "+"Quantity"
+        headerLabel = Label(newDetailFrame,text=headerString,font='TkFixedFont')
+        headerLabel.grid(row=2,columnspan=100,sticky=W)    
 
         data = openDoc()
 
@@ -474,6 +473,108 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     else:
         print("Checked out")
+
+#Check Out Code-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#
+#
+#
+#
+        detailBox = Listbox(newDetailFrame, relief="solid", width=80, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
+        detailBox.grid(row=3, columnspan=100)
+        headerString = "Signed Out By" +"        "+"Where It Is"+"          "+temp+tempSpace+"Quantity"
+        headerLabel = Label(newDetailFrame,text=headerString,font='TkFixedFont')
+        headerLabel.grid(row=2,columnspan=100,sticky=W)
+        data = openDoc()
+
+        if len(data[5]) > 1:
+            for i in range(1,len(data[5])):
+                data[5][i] = data[5][i].split("%")
+        defaultState = int(data[4][indexToRead])
+        #Adding Default state to list
+        #if defaultState > 0:
+        #    boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+str(defaultState)
+        #    detailBox.insert(END,boxString)
+        #    detailBox.itemconfig(0, {"bg": "gray10"})        
+        #-----------------------------
+        #Adding all detail data in data.txt to detail2 box
+        # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
+        boxString = ""
+        indexList = []
+        detailList = [defaultState]
+        counter = 0
+        for i in range(1,len(data[5])):
+            if data[5][i][0] == data[1][indexToRead] and data[5][i][1] == "out":
+                indexList.append(i)
+                for j in range(2,len(data[5][i])):
+                    boxString += data[5][i][j]
+                    for k in range(21-len(data[5][i][j])):
+                        boxString += " "
+                detailBox.insert(END,boxString)
+                counter += 1
+                print(counter)
+                if counter % 2 == 0:
+                    detailBox.itemconfig(counter, {"bg": "gray10"})
+                detailList.append(boxString)
+                boxString = ""
+                print(data[5][i])
+        #------------------------------
+        checkInFrame = Frame(root)
+        checkInFrame.grid(row=0,column=2)
+        titleLabel = Label(checkInFrame,text="Check In Item(s)")
+        titleLabel.grid(row=0,column=0)
+        devider(checkInFrame,1,0)
+
+        techLabel = Label(checkInFrame,text="Tech Checking Item(s) In")
+        techLabel.grid(row=2,column=0)
+        techEntry = Entry(checkInFrame)
+        techEntry.grid(row=3,column=0)
+        devider(checkInFrame,4,0)
+
+
+        whereLabel = Label(checkInFrame,text="Item Location")
+        whereLabel.grid(row=8,column=0)
+        whereEntry = Entry(checkInFrame)
+        whereEntry.grid(row=9,column=0)
+        devider(checkInFrame,10,0)
+
+        timePunchLabel = Label(checkInFrame,text="Time of Action")
+        timePunchLabel.grid(row=11,column=0)
+        timePunchEntry = Entry(checkInFrame)
+        timePunchEntry.grid(row=12,column=0)
+        devider(checkInFrame,13,0)
+
+
+        #Choose Quantity Code------------------------------------------------------------------------------------------------
+
+        quantFrame = Frame(root)
+        quantFrame.grid(row=1,column=0,sticky=W,columnspan=150)
+
+        quantListBox = Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
+        quantListBox.grid(row=0,column=0,rowspan=5)
+
+        removeQuantButton = Button(quantFrame,text="Remove",fg="red")
+        removeQuantButton.grid(row=6,column=0)
+
+        quantEntryLabel = Label(quantFrame,text="Enter Quantity")
+        quantEntryLabel.grid(row=0,column=1)
+
+        quantEntry = Entry(quantFrame)
+        quantEntry.grid(row=1,column=1)
+        quantList = []
+        submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
+
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmit(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
+        finishedButton.grid()
+        detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
+
+
+
+
+
+
+
+
         
  
 def selectItemToQuant(detailBox,detailList,quantBox,userSelect,quantList,indexList):
@@ -533,20 +634,42 @@ def finalSubmit(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,
             print("TOO BIG")
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
             print("Equal")
+            del fixedData[5][quantList[i][2]]
+            newListEntry = [fixedData[5][quantList[i][2]][0],"in",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            fixedData[5].append(newListEntry)
+            fixedDataSave(fixedData)
         else:
             print("Less")
+            newListEntry = [fixedData[5][quantList[i][2]][0],"in",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            #fixedData[5][quantList[i][2]][1] = "in" #CHANGE THIS TO OUT LATER!
+            #fixedData[5][quantList[i][2]][2] = who.get()
+            #fixedData[5][quantList[i][2]][3] = person.get()
+            #fixedData[5][quantList[i][2]][4] = where.get()
+            #fixedData[5][quantList[i][2]][5] = timePunch.get() 
+            #fixedData[5][quantList[i][2]][6] = timeDue.get()
+            fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
+            fixedData[5].append(newListEntry)
+            fixedDataSave(fixedData)
 
 
-
-                #fixedData[5][j][1] = "in" #CHANGE THIS TO OUT LATER!
-                #fixedData[5][j][2] = who.get()
-                #fixedData[5][j][3] = person.get()
-                #fixedData[5][j][4] = where.get()
-                #fixedData[5][j][5] = timePunch.get() 
-                #fixedData[5][j][6] = timeDue.get()
-
-
-
+def fixedDataSave(writeData):
+    print("fixedDataSave")
+    doc = open("Data.txt","w")
+    writeString = ""
+    for i in range(len(writeData)-1):
+        for j in range(len(writeData[i])):
+            writeString += writeData[i][j].strip("\n") + "|"
+        writeString += "\n"
+    writeString += "Info: |"
+    for i in range(1,len(writeData[5])):
+        for j in range(len(writeData[5][i])):
+            writeString += str(writeData[5][i][j])
+            if j != len(writeData[5][i])-1:
+                writeString += "%"
+        writeString += "|"
+    print(writeString)
+    doc.write(writeString)
+    doc.close()   
 
 
 
