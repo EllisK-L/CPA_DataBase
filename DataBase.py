@@ -58,7 +58,6 @@ def searchSetup(frame):
     print("searchSetup")
     def searchSelect(evt):
         print("searchSelect")
-        value = searchResultBox.get(searchResultBox.curselection())
     searchResultBox = Listbox(frame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
     searchResultBox.grid(row=2,columnspan=100)
     data = openDoc()
@@ -71,7 +70,6 @@ def setup():
     global quitThread
     quitThread = False
     def searchThreadFunc():
-        counter = 0
         global quitThread
         data = openDoc()
         new = ""
@@ -478,7 +476,6 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         print("Checked out")
         
  
- 
 def selectItemToQuant(detailBox,detailList,quantBox,userSelect,quantList,indexList):
     inQuantList = False
     iTemp = 0
@@ -514,10 +511,22 @@ def finalSubmit(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,
     data = openDoc()
     print(itemNumber)
     #Getting indexes
+    #print(quantList)
+    print(indexList)
+    for i in range(len(quantList)):
+        for j in range(1,detailBox.size()):
+            if quantList[i][0] == detailBox.get(j):
+                print(fixedData[5])
+                print(quantList)
+                print(fixedData[5][1])
+                print("Yes")
+                print("I ",i)
+                print("J ",j)
+                quantList[i][2] = indexList[j-1]
+
     print(quantList)
     print(indexList)
-    #for i in range(len(quantList)):
-    #    quantList[i][2] = indexList[i]
+    print(fixedData[5][1])
     #Changing info in data
     for i in range(len(quantList)):
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
