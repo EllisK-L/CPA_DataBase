@@ -468,7 +468,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmit(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     else:
@@ -498,6 +498,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         #-----------------------------
         #Adding all detail data in data.txt to detail2 box
         # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
+        
         boxString = ""
         indexList = []
         detailList = [defaultState]
@@ -506,9 +507,10 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
             if data[5][i][0] == data[1][indexToRead] and data[5][i][1] == "out":
                 indexList.append(i)
                 for j in range(2,len(data[5][i])):
-                    boxString += data[5][i][j]
-                    for k in range(21-len(data[5][i][j])):
-                        boxString += " "
+                    if j == 2 or j == 4 or j == 5 or j == 7:
+                        boxString += data[5][i][j]
+                        for k in range(21-len(data[5][i][j])):
+                            boxString += " "
                 detailBox.insert(END,boxString)
                 counter += 1
                 print(counter)
@@ -564,7 +566,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmit(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
@@ -608,7 +610,7 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
     print(quantList)
 
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
-def finalSubmit(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList):
+def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList):
     data = openDoc()
     print(itemNumber)
     #Getting indexes
