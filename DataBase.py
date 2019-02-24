@@ -2,7 +2,6 @@ from tkinter import *
 import threading, time, os
 
 
-
 root=Tk()
 root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
 button_pic_1 = PhotoImage(file="Assets/button_1.png")
@@ -359,7 +358,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 
     returnDefaultButton = Button(newDetailFrame, text="Return to Default State", fg="red")
     returnDefaultButton.grid(row=4, column=0)
-    if "Checked in" in line:
+    if "Checked out" in line:
         temp = "Time Punched In"
         tempSpace = "     "
     else:
@@ -371,7 +370,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 #21 character in each
 
     boxString = ""
-    if "Checked in" in line:
+    if "Checked out" in line:
         detailBox = Listbox(newDetailFrame, relief="solid", width=115, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
         detailBox.grid(row=3, columnspan=100)
         headerString = "Signed Out By" + "        "+"Person Responsible"+ "   "+"Where It Is"+"          "+temp+tempSpace+"Time Due"+"             "+"Quantity"
@@ -385,10 +384,10 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 data[5][i] = data[5][i].split("%")
         defaultState = int(data[4][indexToRead])
         #Adding Default state to list
-        if defaultState > 0:
-            boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+str(defaultState)
-            detailBox.insert(END,boxString)
-            detailBox.itemconfig(0, {"bg": "gray10"})        
+        #if defaultState > 0:
+        #    boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+str(defaultState)
+        #    detailBox.insert(END,boxString)
+        #    detailBox.itemconfig(0, {"bg": "gray10"})        
         #-----------------------------
         #Adding all detail data in data.txt to detail2 box
         # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
@@ -404,17 +403,17 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                     for k in range(21-len(data[5][i][j])):
                         boxString += " "
                 detailBox.insert(END,boxString)
-                counter += 1
                 print(counter)
                 if counter % 2 == 0:
                     detailBox.itemconfig(counter, {"bg": "gray10"})
                 detailList.append(boxString)
                 boxString = ""
                 print(data[5][i])
+                counter += 1
         #------------------------------
         checkInFrame = Frame(root)
         checkInFrame.grid(row=0,column=2)
-        titleLabel = Label(checkInFrame,text="Check Out Item(s)")
+        titleLabel = Label(checkInFrame,text="Check In Item(s)")
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
@@ -491,10 +490,10 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 data[5][i] = data[5][i].split("%")
         defaultState = int(data[4][indexToRead])
         #Adding Default state to list
-        #if defaultState > 0:
-        #    boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+str(defaultState)
-        #    detailBox.insert(END,boxString)
-        #    detailBox.itemconfig(0, {"bg": "gray10"})        
+        if defaultState > 0:
+            boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+str(defaultState)
+            detailBox.insert(END,boxString)
+            detailBox.itemconfig(0, {"bg": "gray10"})        
         #-----------------------------
         #Adding all detail data in data.txt to detail2 box
         # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
@@ -508,6 +507,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 indexList.append(i)
                 for j in range(2,len(data[5][i])):
                     if j == 2 or j == 4 or j == 5 or j == 7:
+                        print(j)
                         boxString += data[5][i][j]
                         for k in range(21-len(data[5][i][j])):
                             boxString += " "
@@ -522,7 +522,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         #------------------------------
         checkInFrame = Frame(root)
         checkInFrame.grid(row=0,column=2)
-        titleLabel = Label(checkInFrame,text="Check In Item(s)")
+        titleLabel = Label(checkInFrame,text="Check Out Item(s)")
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
@@ -611,6 +611,7 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
 
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
 def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList):
+
     data = openDoc()
     print(itemNumber)
     #Getting indexes
@@ -631,6 +632,9 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
     print(indexList)
     print(fixedData[5][1])
     #Changing info in data
+    time.sleep(1)
+    for i in range(len(quantList)):
+        quantList[i][2] = int(quantList[i][2]) + 1
     for i in range(len(quantList)):
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
             print("TOO BIG")
