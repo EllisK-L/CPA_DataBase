@@ -417,17 +417,12 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
-        techLabel = Label(checkInFrame,text="Tech Checking Item(s) in")
+        techLabel = Label(checkInFrame,text="Tech Checking Item(s) In")
         techLabel.grid(row=2,column=0)
         techEntry = Entry(checkInFrame)
         techEntry.grid(row=3,column=0)
         devider(checkInFrame,4,0)
 
-        personLabel = Label(checkInFrame,text="Person Responsible For Item(s)")
-        personLabel.grid(row=5,column=0)
-        personEntry = Entry(checkInFrame)
-        personEntry.grid(row=6,column=0)
-        devider(checkInFrame,7,0)
 
         whereLabel = Label(checkInFrame,text="Item Location")
         whereLabel.grid(row=8,column=0)
@@ -440,12 +435,6 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         timePunchEntry = Entry(checkInFrame)
         timePunchEntry.grid(row=12,column=0)
         devider(checkInFrame,13,0)
-
-        timeDueLabel = Label(checkInFrame,text="Time Item(s) Is Due")
-        timeDueLabel.grid(row=14,column=0)
-        timeDueEntry = Entry(checkInFrame)
-        timeDueEntry.grid(row=15,column=0)
-        devider(checkInFrame,16,0)
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
@@ -526,12 +515,17 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
-        techLabel = Label(checkInFrame,text="Tech Checking Item(s) In")
+        techLabel = Label(checkInFrame,text="Tech Checking Item(s) in")
         techLabel.grid(row=2,column=0)
         techEntry = Entry(checkInFrame)
         techEntry.grid(row=3,column=0)
         devider(checkInFrame,4,0)
 
+        personLabel = Label(checkInFrame,text="Person Responsible For Item(s)")
+        personLabel.grid(row=5,column=0)
+        personEntry = Entry(checkInFrame)
+        personEntry.grid(row=6,column=0)
+        devider(checkInFrame,7,0)
 
         whereLabel = Label(checkInFrame,text="Item Location")
         whereLabel.grid(row=8,column=0)
@@ -544,6 +538,12 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         timePunchEntry = Entry(checkInFrame)
         timePunchEntry.grid(row=12,column=0)
         devider(checkInFrame,13,0)
+
+        timeDueLabel = Label(checkInFrame,text="Time Item(s) Is Due")
+        timeDueLabel.grid(row=14,column=0)
+        timeDueEntry = Entry(checkInFrame)
+        timeDueEntry.grid(row=15,column=0)
+        devider(checkInFrame,16,0)
 
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
@@ -611,7 +611,8 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
 
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
 def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList):
-
+    for i in range(len(indexList)):
+        indexList[i] = int(indexList)
     data = openDoc()
     print(itemNumber)
     #Getting indexes
