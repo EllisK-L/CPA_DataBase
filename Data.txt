@@ -2,5 +2,5 @@ Name: |Windows Laptop|XLR Cable|Light|MacBook Pro|Whiteboard|Test|TestAgain|Mark
 Item Number: |WL12|XLR1232|iytccriy7|A1170|WB|wat|12345678w|Mker|Dle1|Bx12|HPLap|USB12|Tosh|KB12|
 Number Checked in: |3|12|30|2|1|23|12|51|1|34|2|2|1|2|
 Number Checked out: |0|0|0|0|0|0|0|0|0|0|0|0|0|0|
-Default Sate: |3|12|30|2|1|23|12|51|1|34|2|2|1|2|
-Info: |WL12%}in{%Ellis%Warren%Stage%time punch%time due%2|WL12%}out{%Malcome%Iain%box%time punch%time due%1|WL12%}out{%Ellis%Iain%Th School%Feb 13%Feb 14%2|WL12%}out{%Ellis%Not Warrn%Not CPA%Feb 13%Feb 14%1|WL12%}out{%Ellis%Jerem%house%feb%march%2|WL12%}out{%Peck%Warrern%stage%feb 17%feb 19%1|WL12%}out{%Ellis2%Ellis2%house%feb2%jun%1|WL12%}out{%Ellis4%---%House4%Feb4%---%1|WL12%}out{%Ellis6%Ellis6%Ellis6%Ellis6%Ellis6%1|WL12%}in{%Ellis7%---%Ellis7%Ellis7%---%1|WL12%}in{%Ellis8%---%Ellis8%Ellis8%---%1|
+Default Sate: |2|12|30|2|1|23|12|51|1|34|2|2|1|2|
+Info: |WL12%}out{%Malcome%Iain%box%time punch%time due%1|WL12%}out{%Ellis%Iain%Th School%Feb 13%Feb 14%2|WL12%}out{%Ellis%Not Warrn%Not CPA%Feb 13%Feb 14%1|WL12%}out{%Ellis%Jerem%house%feb%march%2|WL12%}out{%Peck%Warrern%stage%feb 17%feb 19%1|WL12%}out{%Ellis2%Ellis2%house%feb2%jun%1|WL12%}out{%Ellis4%---%House4%Feb4%---%1|WL12%}out{%Ellis6%Ellis6%Ellis6%Ellis6%Ellis6%1|WL12%}in{%Ellis7%---%Ellis7%Ellis7%---%1|WL12%}in{%Ellis8%---%Ellis8%Ellis8%---%1|WL12%}out{%Ellis9%Ellis9%Ellis9%Ellis9%Ellis9%1|

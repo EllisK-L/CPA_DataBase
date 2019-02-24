@@ -616,21 +616,44 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
     #Getting indexes
     #print(quantList)
     print(indexList)
+    deleteValue = []
+
+
+    for i in range(len(quantList)):
+        if quantList[i][0] == detailBox.get(0):
+            tempIndex = i
+            for j in range(len(fixedData[1])):
+                if itemNumber == fixedData[1][j]:
+                    deleteValue.append(i)
+                    if int(fixedData[4][j]) < int(quantList[i][1]):
+                        print("TOO BIG")
+                    elif int(fixedData[4][j]) >= int(quantList[i][1]):
+                        print("Equal")
+                        del fixedData[5][quantList[i][2]]
+                        newListEntry = [fixedData[5][quantList[i][2]][0],"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+                        fixedData[4][j] = int(fixedData[4][j]) - int(quantList[i][1])
+                        fixedData[5].append(newListEntry)
+                        fixedDataSave(fixedData)
+    for i in range(len(quantList)-1,-1,-1):
+        if i == deleteValue[i]:
+            del quantList[i]
+
+    
+
+
+
     for i in range(len(quantList)):
         for j in range(1,detailBox.size()):
             if quantList[i][0] == detailBox.get(j):
-                print(fixedData[5])
-                print(quantList)
-                print(fixedData[5][1])
-                print("Yes")
-                print("I ",i)
-                print("J ",j)
                 quantList[i][2] = indexList[j-1]
 
     print(quantList)
     print(indexList)
     print(fixedData[5][1])
-    
+
+
+
+
     for i in range(len(quantList)):
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
             print("TOO BIG")
@@ -712,7 +735,7 @@ def fixedDataSave(writeData):
     writeString = ""
     for i in range(len(writeData)-1):
         for j in range(len(writeData[i])):
-            writeString += writeData[i][j].strip("\n") + "|"
+            writeString += str(str(writeData[i][j]).strip("\n")) + "|"
         writeString += "\n"
     writeString += "Info: |"
     for i in range(1,len(writeData[5])):
