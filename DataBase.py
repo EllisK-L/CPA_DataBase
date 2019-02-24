@@ -370,7 +370,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 #21 character in each
 
     boxString = ""
-    if "Checked out" in line:
+    if "out" in line:
         detailBox = Listbox(newDetailFrame, relief="solid", width=115, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
         detailBox.grid(row=3, columnspan=100)
         headerString = "Signed Out By" + "        "+"Person Responsible"+ "   "+"Where It Is"+"          "+temp+tempSpace+"Time Due"+"             "+"Quantity"
@@ -396,7 +396,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         detailList = [defaultState]
         counter = 0
         for i in range(1,len(data[5])):
-            if data[5][i][0] == data[1][indexToRead] and data[5][i][1] == "in":
+            if data[5][i][0] == data[1][indexToRead] and data[5][i][1] == "}out{":
                 indexList.append(i)
                 for j in range(2,len(data[5][i])):
                     boxString += data[5][i][j]
@@ -456,13 +456,13 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     else:
         print("Checked out")
 
-#Check Out Code-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Checked in Items Code-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #
 #
 #
@@ -492,7 +492,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         detailList = [defaultState]
         counter = 0
         for i in range(1,len(data[5])):
-            if data[5][i][0] == data[1][indexToRead] and data[5][i][1] == "out":
+            if data[5][i][0] == data[1][indexToRead] and data[5][i][1] == "}in{":
                 indexList.append(i)
                 for j in range(2,len(data[5][i])):
                     if j == 2 or j == 4 or j == 5 or j == 7:
@@ -611,8 +611,52 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
 
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
 def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList):
-    for i in range(len(indexList)):
-        indexList[i] = int(indexList)
+    data = openDoc()
+    print(itemNumber)
+    #Getting indexes
+    #print(quantList)
+    print(indexList)
+    for i in range(len(quantList)):
+        for j in range(1,detailBox.size()):
+            if quantList[i][0] == detailBox.get(j):
+                print(fixedData[5])
+                print(quantList)
+                print(fixedData[5][1])
+                print("Yes")
+                print("I ",i)
+                print("J ",j)
+                quantList[i][2] = indexList[j-1]
+
+    print(quantList)
+    print(indexList)
+    print(fixedData[5][1])
+    
+    for i in range(len(quantList)):
+        if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
+            print("TOO BIG")
+        elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
+            print("Equal")
+            del fixedData[5][quantList[i][2]]
+            newListEntry = [fixedData[5][quantList[i][2]][0],"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            fixedData[5].append(newListEntry)
+            fixedDataSave(fixedData)
+        else:
+            print("Less")
+            newListEntry = [fixedData[5][quantList[i][2]][0],"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            #fixedData[5][quantList[i][2]][1] = "in" #CHANGE THIS TO OUT LATER!
+            #fixedData[5][quantList[i][2]][2] = who.get()
+            #fixedData[5][quantList[i][2]][3] = person.get()
+            #fixedData[5][quantList[i][2]][4] = where.get()
+            #fixedData[5][quantList[i][2]][5] = timePunch.get() 
+            #fixedData[5][quantList[i][2]][6] = timeDue.get()
+            fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
+            fixedData[5].append(newListEntry)
+            fixedDataSave(fixedData)
+
+
+
+
+def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList):
     data = openDoc()
     print(itemNumber)
     #Getting indexes
@@ -633,7 +677,7 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
     print(indexList)
     print(fixedData[5][1])
     #Changing info in data
-    time.sleep(1)
+
     for i in range(len(quantList)):
         quantList[i][2] = int(quantList[i][2]) + 1
     for i in range(len(quantList)):
@@ -642,12 +686,12 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
             print("Equal")
             del fixedData[5][quantList[i][2]]
-            newListEntry = [fixedData[5][quantList[i][2]][0],"in",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            newListEntry = [fixedData[5][quantList[i][2]][0],"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
         else:
             print("Less")
-            newListEntry = [fixedData[5][quantList[i][2]][0],"in",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            newListEntry = [fixedData[5][quantList[i][2]][0],"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
             #fixedData[5][quantList[i][2]][1] = "in" #CHANGE THIS TO OUT LATER!
             #fixedData[5][quantList[i][2]][2] = who.get()
             #fixedData[5][quantList[i][2]][3] = person.get()
@@ -657,6 +701,9 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
+
+
+
 
 
 def fixedDataSave(writeData):
