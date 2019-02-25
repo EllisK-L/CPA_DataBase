@@ -1,6 +1,7 @@
 from tkinter import *
 import threading, time, os
 
+numOfFrames = 0
 
 root=Tk()
 root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
@@ -27,6 +28,7 @@ def openDoc():
     return data
 
 def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
+    global numOfFrames
     print("addItem")
     writeData = ""
     data = openDoc()
@@ -43,6 +45,7 @@ def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
     doc.write(writeData)
     doc.close()
     searchResultBox.destroy()
+    numOfFrames -= 1
     searchSetup(searchFrame)
     setup()
 
@@ -63,6 +66,7 @@ def searchSetup(frame):
     return searchResultBox
 
 def setup():
+    global numOfFrames
     print("Setup")
     global quitThread
     quitThread = False
@@ -111,6 +115,7 @@ def setup():
     searchThread = threading.Thread(target=searchThreadFunc,args="")
     searchThread.start()
     searchFrame = Frame(root)
+    numOfFrames += 1
     searchFrame.grid(row=0,column=0)
 
     searchLabel = Label(searchFrame,text="Search")
@@ -134,6 +139,7 @@ def setup():
     #Add (right side)-----------------------------------------------
 
     addFrame = Frame(root)
+    numOfFrames += 1
     addFrame.grid(row=0,column=1,columnspan=3)
 
     addText = Label(addFrame,text="Add Item\n--------------------------------------")
@@ -230,6 +236,7 @@ def deleteInit(line,searchResultBox,searchFrame):
     uSureNoButton.pack(side=LEFT)
 
 def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,newFrame):
+    global numOfFrames
     print("deleting")
     writeData = ""
     data = openDoc()
@@ -247,12 +254,14 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,newFrame):
     else:
         pass
     newFrame.destroy()
+    numOfFrames -= 1
 
 
 
 
 
 def getDetails(line,searchResultBox,frame,addFrame):
+    global numOfFrames
     print("getDetails")
     global quitThread
     quitThread = True
@@ -272,9 +281,12 @@ def getDetails(line,searchResultBox,frame,addFrame):
             indexToRead = i
 
 #--------------------------------------------------
-    def back(oldFrame):
+    def back(oldFrame,addFrame):
+        global numOfFrames
         print("back")
         oldFrame.destroy()
+        addFrame.destroy()
+        numOfFrames -= 2
         setup()
 #--------------------------------------------------
     #Details template: |item Number\Checked in or out\time stamp\time due\where is it\what tech\person responsibal|
@@ -294,10 +306,11 @@ def getDetails(line,searchResultBox,frame,addFrame):
         if data[1][i] == tempText:
             indexToRead = i
     detailFrame = Frame(root)
+    numOfFrames += 1
     detailFrame.grid(row=0,column=0)
     detailBox = Listbox(detailFrame,relief="solid",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
     detailBox.grid(row=2,columnspan=100)
-    backButton = Button(detailFrame,text="Back",command=lambda :back(detailFrame))
+    backButton = Button(detailFrame,text="Back",command=lambda :back(detailFrame,addFrame))
     backButton.grid(row=0,column=0)
     nameString = data[0][indexToRead]
 
@@ -322,9 +335,11 @@ def getDetails(line,searchResultBox,frame,addFrame):
     detailButton = Button(detailFrame,text="Details",height=2,width=10,command=lambda :details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
     detailButton.grid(row=3,column=3,columnspan=73)
     frame.destroy()
+    numOfFrames -= 1
 
 def details2(oldFrame,line,indexToRead,addFrame):
     print("details2")
+    global numOfFrames
     '''
 On this screen, there will be, The name of the item at the top of the screen, below there will be a set of items:
 TIme stamp, time due, Where is it, person responsible, tech signed out, quantity.
@@ -332,10 +347,12 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 #|item Number\Checked in or out\time stamp\time due\where is it\what tech\person responsible|
     '''
     def back():
+        global numOfFrames
         print("back")
         newDetailFrame.destroy()
         quantFrame.destroy()
         addFrame.destroy()
+        numOfFrames -= 3
         try:
             checkInFrame.destroy()
         except:
@@ -344,7 +361,9 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         setup()
     addFrame.destroy()
     oldFrame.destroy()
+    numOfFrames -= 2
     newDetailFrame = Frame(root)
+    numOfFrames += 1
     newDetailFrame.grid(row=0,column=0,sticky=W)
     backButton = Button(newDetailFrame, text="Back", command=back)
     backButton.grid(row=0, column=0)
@@ -412,6 +431,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 counter += 1
         #------------------------------
         checkInFrame = Frame(root)
+        numOfFrames += 1
         checkInFrame.grid(row=0,column=2)
         titleLabel = Label(checkInFrame,text="Check In Item(s)")
         titleLabel.grid(row=0,column=0)
@@ -439,6 +459,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
         quantFrame = Frame(root)
+        numOfFrames += 1
         quantFrame.grid(row=1,column=0,sticky=W,columnspan=150)
 
         quantListBox = Listbox(quantFrame,width=115,height=5,font='TkFixedFont')
@@ -510,6 +531,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 print(data[5][i])
         #------------------------------
         checkInFrame = Frame(root)
+        numOfFrames += 1
         checkInFrame.grid(row=0,column=2)
         titleLabel = Label(checkInFrame,text="Check Out Item(s)")
         titleLabel.grid(row=0,column=0)
@@ -549,6 +571,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
         quantFrame = Frame(root)
+        numOfFrames += 1
         quantFrame.grid(row=1,column=0,sticky=W,columnspan=150)
 
         quantListBox = Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
@@ -570,7 +593,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
-
+    print(numOfFrames)
 
 
 
