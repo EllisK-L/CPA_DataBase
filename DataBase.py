@@ -175,7 +175,7 @@ def buttons(frame,searchBox,addFrame):
     deleteButton = Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
     deleteButton.grid(row=4,column=0)
 
-    detailButton = Button(frame,text="Details",image=button_pic_1,relief="flat",height=20,width=100,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButton = Button(frame,text="Details",relief="raised",height=2,width=10,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     detailButton.grid(row=4,column=3)
 
 #flat, groove, raised, ridge, solid, or sunken
