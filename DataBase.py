@@ -629,43 +629,44 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
                         print("TOO BIG")
                     elif int(fixedData[4][j]) >= int(quantList[i][1]):
                         print("Equal")
-                        del fixedData[5][quantList[i][2]]
-                        newListEntry = [fixedData[5][quantList[i][2]][0],"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+                        newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
                         fixedData[4][j] = int(fixedData[4][j]) - int(quantList[i][1])
                         fixedData[5].append(newListEntry)
                         fixedDataSave(fixedData)
-    for i in range(len(quantList)-1,-1,-1):
-        if i == deleteValue[i]:
-            del quantList[i]
+                        print(fixedData[5])
+                        quantList = []
+    #for i in range(len(quantList)-1,-1,-1):
+    #    if i == deleteValue[i]:
+    #        del quantList[i]
 
     
 
 
 
-    for i in range(len(quantList)):
-        for j in range(1,detailBox.size()):
-            if quantList[i][0] == detailBox.get(j):
-                quantList[i][2] = indexList[j-1]
+    #for i in range(len(quantList)):
+    #    for j in range(1,detailBox.size()):
+    #        if quantList[i][0] == detailBox.get(j):
+    #            quantList[i][2] = indexList[j-1]
 
     print(quantList)
     print(indexList)
-    print(fixedData[5][1])
 
 
 
 
     for i in range(len(quantList)):
+        print("loop")
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
             print("TOO BIG")
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
             print("Equal")
             del fixedData[5][quantList[i][2]]
-            newListEntry = [fixedData[5][quantList[i][2]][0],"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
         else:
             print("Less")
-            newListEntry = [fixedData[5][quantList[i][2]][0],"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
+            newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
             #fixedData[5][quantList[i][2]][1] = "in" #CHANGE THIS TO OUT LATER!
             #fixedData[5][quantList[i][2]][2] = who.get()
             #fixedData[5][quantList[i][2]][3] = person.get()
@@ -709,12 +710,12 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
             print("Equal")
             del fixedData[5][quantList[i][2]]
-            newListEntry = [fixedData[5][quantList[i][2]][0],"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
+            newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
         else:
             print("Less")
-            newListEntry = [fixedData[5][quantList[i][2]][0],"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
+            newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
             #fixedData[5][quantList[i][2]][1] = "in" #CHANGE THIS TO OUT LATER!
             #fixedData[5][quantList[i][2]][2] = who.get()
             #fixedData[5][quantList[i][2]][3] = person.get()
