@@ -353,11 +353,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantFrame.destroy()
         addFrame.destroy()
         numOfFrames -= 3
-        try:
-            checkInFrame.destroy()
-        except:
-            pass
-            #checkOutFrame.destroy()
+        checkInFrame.destroy()
         setup()
     addFrame.destroy()
     oldFrame.destroy()
@@ -477,7 +473,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     else:
@@ -589,7 +585,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList))
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
@@ -633,7 +629,7 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
     print(quantList)
 
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
-def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList):
+def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     data = openDoc()
     print(itemNumber)
     #Getting indexes
@@ -699,11 +695,15 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
+    newDetailFrame.destroy()
+    quantFrame.destroy()
+    checkInFrame.destroy()
+    setup()
 
 
 
 
-def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList):
+def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     data = openDoc()
     print(itemNumber)
     #Getting indexes
@@ -748,6 +748,10 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
+    newDetailFrame.destroy()
+    quantFrame.destroy()
+    checkInFrame.destroy()
+    setup()
 
 
 
