@@ -277,7 +277,7 @@ def getDetails(line,searchResultBox,frame,addFrame):
         numOfFrames -= 2
         setup()
 #--------------------------------------------------
-    #Details template: |item Number\Checked in or out\time stamp\time due\where is it\what tech\person responsibal|
+    #Details template: |item Number\Checked in or out\time stamp\time due\where is it\what tech\person responsible|
 
     indexToRead = ""
     text = line
