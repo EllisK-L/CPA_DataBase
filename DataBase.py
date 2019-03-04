@@ -18,7 +18,6 @@ root.title("CPA Data Base")
 quitThread = False
 
 def openDoc():
-    print("openDoc")
     doc = open("Data.txt","r")
     data = doc.readlines()
     for i in range(len(data)):
@@ -29,7 +28,6 @@ def openDoc():
 
 def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
     global numOfFrames
-    print("addItem")
     writeData = ""
     data = openDoc()
     data[0].append(itemName)
@@ -50,14 +48,12 @@ def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
     setup()
 
 def devider(frame,row,column):
-    print("devider")
     devider = Label(frame)
     devider.grid(row=row,column=column,columnspan=2)
 
 def searchSetup(frame):
-    print("searchSetup")
     def searchSelect(evt):
-        print("searchSelect")
+                value = searchResultBox.get(searchResultBox.curselection())
     searchResultBox = Listbox(frame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
     searchResultBox.grid(row=2,columnspan=100)
     data = openDoc()
@@ -67,7 +63,6 @@ def searchSetup(frame):
 
 def setup():
     global numOfFrames
-    print("Setup")
     global quitThread
     quitThread = False
     def searchThreadFunc():
@@ -76,7 +71,6 @@ def setup():
         new = ""
         finalList = []
         while quitThread == False:
-            print("Threading")
             time.sleep(.1)
             try:
                 userSearch = str(searchBox.get())
@@ -177,7 +171,6 @@ def setup():
 
 
 def buttons(frame,searchBox,addFrame):
-    print("Buttons")
     deleteButton = Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
     deleteButton.grid(row=4,column=0)
 
@@ -187,7 +180,6 @@ def buttons(frame,searchBox,addFrame):
 #flat, groove, raised, ridge, solid, or sunken
 
 def formatSearchBox(data,box):
-    print("formatSearchBox")
     finalList = []
     boxString = ""
     for i in range(1,len(data[0])):
@@ -206,7 +198,6 @@ def formatSearchBox(data,box):
 
 
 def deleteInit(line,searchResultBox,searchFrame):
-    print("deleteInit")
     indexToRead = ""
     text = line
     text = text[30:]
@@ -237,7 +228,6 @@ def deleteInit(line,searchResultBox,searchFrame):
 
 def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,newFrame):
     global numOfFrames
-    print("deleting")
     writeData = ""
     data = openDoc()
     if yOrN == "Y":
@@ -262,7 +252,6 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,newFrame):
 
 def getDetails(line,searchResultBox,frame,addFrame):
     global numOfFrames
-    print("getDetails")
     global quitThread
     quitThread = True
     indexToRead = ""
@@ -283,7 +272,6 @@ def getDetails(line,searchResultBox,frame,addFrame):
 #--------------------------------------------------
     def back(oldFrame,addFrame):
         global numOfFrames
-        print("back")
         oldFrame.destroy()
         addFrame.destroy()
         numOfFrames -= 2
@@ -338,7 +326,6 @@ def getDetails(line,searchResultBox,frame,addFrame):
     numOfFrames -= 1
 
 def details2(oldFrame,line,indexToRead,addFrame):
-    print("details2")
     global numOfFrames
     '''
 On this screen, there will be, The name of the item at the top of the screen, below there will be a set of items:
@@ -348,7 +335,6 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     '''
     def back():
         global numOfFrames
-        print("back")
         newDetailFrame.destroy()
         quantFrame.destroy()
         addFrame.destroy()
@@ -399,10 +385,10 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 data[5][i] = data[5][i].split("%")
         defaultState = int(data[4][indexToRead])
         #Adding Default state to list
-        #if defaultState > 0:
-        #    boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+str(defaultState)
-        #    detailBox.insert(END,boxString)
-        #    detailBox.itemconfig(0, {"bg": "gray10"})        
+        if defaultState > 0:
+            boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"
+            detailBox.insert(END,boxString)
+            detailBox.itemconfig(0, {"bg": "gray10"})        
         #-----------------------------
         #Adding all detail data in data.txt to detail2 box
         # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
@@ -418,12 +404,10 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                     for k in range(21-len(data[5][i][j])):
                         boxString += " "
                 detailBox.insert(END,boxString)
-                print(counter)
                 if counter % 2 == 0:
                     detailBox.itemconfig(counter, {"bg": "gray10"})
                 detailList.append(boxString)
                 boxString = ""
-                print(data[5][i])
                 counter += 1
         #------------------------------
         checkInFrame = Frame(root)
@@ -477,7 +461,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     else:
-        print("Checked out")
+
 
 #Checked in Items Code-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #
@@ -496,7 +480,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 data[5][i] = data[5][i].split("%")
         defaultState = int(data[4][indexToRead])
         #Adding Default state to list
-        if defaultState > 0:
+        if defaultState > -1:
             boxString = "---"+"                  "+"---"+"                  "+"---"+"                  "+str(defaultState)
             detailBox.insert(END,boxString)
             detailBox.itemconfig(0, {"bg": "gray10"})        
@@ -513,18 +497,15 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 indexList.append(i)
                 for j in range(2,len(data[5][i])):
                     if j == 2 or j == 4 or j == 5 or j == 7:
-                        print(j)
                         boxString += data[5][i][j]
                         for k in range(21-len(data[5][i][j])):
                             boxString += " "
                 detailBox.insert(END,boxString)
                 counter += 1
-                print(counter)
                 if counter % 2 == 0:
                     detailBox.itemconfig(counter, {"bg": "gray10"})
                 detailList.append(boxString)
                 boxString = ""
-                print(data[5][i])
         #------------------------------
         checkInFrame = Frame(root)
         numOfFrames += 1
@@ -533,7 +514,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
-        techLabel = Label(checkInFrame,text="Tech Checking Item(s) in")
+        techLabel = Label(checkInFrame,text="Tech Checking Item(s) out")
         techLabel.grid(row=2,column=0)
         techEntry = Entry(checkInFrame)
         techEntry.grid(row=3,column=0)
@@ -557,7 +538,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         timePunchEntry.grid(row=12,column=0)
         devider(checkInFrame,13,0)
 
-        timeDueLabel = Label(checkInFrame,text="Time Item(s) Is Due")
+        timeDueLabel = Label(checkInFrame,text="Time Item(s) are Due")
         timeDueLabel.grid(row=14,column=0)
         timeDueEntry = Entry(checkInFrame)
         timeDueEntry.grid(row=15,column=0)
@@ -589,7 +570,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
-    print(numOfFrames)
+
 
 
 
@@ -617,7 +598,6 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
     for i in range(quantBox.size()):
         if quantBox.get(i) == currentSelection:
             currentSelectionIndex = i
-    print(currentSelectionIndex)
     quantBox.itemconfig(currentSelectionIndex,{"bg":"green"})
 
     if quantEntry.get() == "":
@@ -626,20 +606,17 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
         quant = quantEntry.get()
 
     quantList[currentSelectionIndex][1] = quant
-    print(quantList)
 
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
 def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     data = openDoc()
-    print(itemNumber)
     #Getting indexes
-    #print(quantList)
-    print(indexList)
     deleteValue = []
 
-
+    dontUse = "---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"+"                  "+"---"
+    '''
     for i in range(len(quantList)):
-        if quantList[i][0] == detailBox.get(0):
+        if quantList[i][0] == detailBox.get(0) and detailBox.get(0) != dontUse:
             tempIndex = i
             for j in range(len(fixedData[1])):
                 if itemNumber == fixedData[1][j]:
@@ -647,51 +624,31 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
                     if int(fixedData[4][j]) < int(quantList[i][1]):
                         print("TOO BIG")
                     elif int(fixedData[4][j]) >= int(quantList[i][1]):
-                        print("Equal")
                         newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
                         fixedData[4][j] = int(fixedData[4][j]) - int(quantList[i][1])
                         fixedData[5].append(newListEntry)
                         fixedDataSave(fixedData)
-                        print(fixedData[5])
-                        quantList = []
-    #for i in range(len(quantList)-1,-1,-1):
-    #    if i == deleteValue[i]:
-    #        del quantList[i]
+                        #quantList = []
+    if len(deleteValue) > 0:
+        for i in range(len(quantList)-1,-1,-1):
+            if i == deleteValue[0]:
+                del quantList[i]
+                deleteValue = []
+                break
 
-    
-
-
-
-    #for i in range(len(quantList)):
-    #    for j in range(1,detailBox.size()):
-    #        if quantList[i][0] == detailBox.get(j):
-    #            quantList[i][2] = indexList[j-1]
-
-    print(quantList)
-    print(indexList)
-
-
-
-
+'''
     for i in range(len(quantList)):
-        print("loop")
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
             print("TOO BIG")
+
+
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
-            print("Equal")
             del fixedData[5][quantList[i][2]]
             newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
         else:
-            print("Less")
             newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
-            #fixedData[5][quantList[i][2]][1] = "in" #CHANGE THIS TO OUT LATER!
-            #fixedData[5][quantList[i][2]][2] = who.get()
-            #fixedData[5][quantList[i][2]][3] = person.get()
-            #fixedData[5][quantList[i][2]][4] = where.get()
-            #fixedData[5][quantList[i][2]][5] = timePunch.get() 
-            #fixedData[5][quantList[i][2]][6] = timeDue.get()
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
@@ -705,46 +662,27 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
 
 def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     data = openDoc()
-    print(itemNumber)
     #Getting indexes
     #print(quantList)
-    print(indexList)
     for i in range(len(quantList)):
         for j in range(1,detailBox.size()):
             if quantList[i][0] == detailBox.get(j):
-                print(fixedData[5])
-                print(quantList)
-                print(fixedData[5][1])
-                print("Yes")
-                print("I ",i)
-                print("J ",j)
                 quantList[i][2] = indexList[j-1]
 
-    print(quantList)
-    print(indexList)
-    print(fixedData[5][1])
     #Changing info in data
 
     for i in range(len(quantList)):
-        quantList[i][2] = int(quantList[i][2]) + 1
+        quantList[i][2] = int(quantList[i][2]) 
     for i in range(len(quantList)):
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
             print("TOO BIG")
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
-            print("Equal")
             del fixedData[5][quantList[i][2]]
             newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
         else:
-            print("Less")
             newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
-            #fixedData[5][quantList[i][2]][1] = "in" #CHANGE THIS TO OUT LATER!
-            #fixedData[5][quantList[i][2]][2] = who.get()
-            #fixedData[5][quantList[i][2]][3] = person.get()
-            #fixedData[5][quantList[i][2]][4] = where.get()
-            #fixedData[5][quantList[i][2]][5] = timePunch.get() 
-            #fixedData[5][quantList[i][2]][6] = timeDue.get()
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
             fixedData[5].append(newListEntry)
             fixedDataSave(fixedData)
@@ -758,7 +696,6 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
 
 
 def fixedDataSave(writeData):
-    print("fixedDataSave")
     doc = open("Data.txt","w")
     writeString = ""
     for i in range(len(writeData)-1):
@@ -772,24 +709,14 @@ def fixedDataSave(writeData):
             if j != len(writeData[5][i])-1:
                 writeString += "%"
         writeString += "|"
-    print(writeString)
     doc.write(writeString)
     doc.close()   
-
-
-
 
 
 
 #Main Code
 
 setup()
-
-
-
-
-
-
 
 
 root.mainloop()

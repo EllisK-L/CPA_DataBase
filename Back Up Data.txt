@@ -1,6 +1,6 @@
 Name: |Windows Laptop|XLR Cable|Light|MacBook Pro|Whiteboard|Test|TestAgain|Marker|Dell|Box#12|HP Laptop|USB Stick|Toshiba|Keyboard|
 Item Number: |WL12|XLR1232|iytccriy7|A1170|WB|wat|12345678w|Mker|Dle1|Bx12|HPLap|USB12|Tosh|KB12|
 Number Checked in: |3|12|30|2|1|23|12|51|1|34|2|2|1|2|
-Number Checked out: |0|0|0|0|0|0|0|0|0|0|0|0|0|0|
+Number Checked in: |0|0|0|0|0|0|0|0|0|0|0|0|0|0|
 Default Sate: |3|12|30|2|1|23|12|51|1|34|2|2|1|2|
-Info: |WL12%in%Ellis%Warren%Stage%time punch%time due%1|WL12%out%Malcome%Iain%box%time punch%time due%3|WL12%in%Ellis%Warren%Booth%time punch%time due%2|
+Info: |WL12%in%Ellis%Warren%Stage%time punch%time due%1|WL12%in%Malcome%Iain%box%time punch%time due%3|WL12%in%Ellis%Warren%Booth%time punch%time due%2|
