@@ -305,18 +305,39 @@ def getDetails(line,searchResultBox,frame,addFrame):
     nameLabel = Label(detailFrame,text=nameString,font=("Comic Sans MS", 20))
     nameLabel.grid(row=1,column=50-(len(nameString)//2))
 
+    numChecked = 0
+
+    if len(data[5]) > 1:
+        for i in range(1,len(data[5])):
+            data[5][i] = data[5][i].split("%")
+
     boxString = "Checked in:"
     for i in range(50-len(boxString)):
         boxString += " "
-    boxString += str(data[2][indexToRead])
+    for i in range(1,len(data[5])):
+        if data[5][i][1] == "}in{":
+            numChecked += int(data[5][i][7])
+    boxString += str(numChecked)
     detailBox.insert(END,boxString)
     detailBox.itemconfigure(0,{"bg":"gray10"})
+    
+    numChecked = 0
 
     boxString = "Checked out:"
     for i in range(50-len(boxString)):
         boxString += " "
-    boxString += str(data[3][indexToRead])
+    for i in range(1,len(data[5])):
+        if data[5][i][1] == "}out{":
+            numChecked += int(data[5][i][7])
+    boxString += str(numChecked)
     detailBox.insert(END,boxString)
+
+    boxString = "'Limbo' State"
+    for i in range(50-len(boxString)):
+        boxString += " "
+    boxString += str(data[4][indexToRead])
+    detailBox.insert(END,boxString)
+
 
     detailBox.bind("<Double-Button-1>",lambda eff: details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
 
@@ -460,7 +481,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
-    else:
+    elif "in" in line:
 
 
 #Checked in Items Code-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -570,7 +591,8 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
-
+    else:
+        print("OK")
 
 
 
