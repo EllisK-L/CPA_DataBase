@@ -629,17 +629,18 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
 
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
             indexToDel.append(i)
-            newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
-            fixedData[5].append(newListEntry)
         else:
-            newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),int(quantList[i][1])]
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
-            fixedData[5].append(newListEntry)
-            fixedDataSave(fixedData)
     
     for i in range(len(indexToDel)-1,-1,-1):
         del fixedData[5][quantList[indexToDel[i]][2]]
         fixedDataSave(fixedData)
+    totalQuant = 0
+    for i in range(len(quantList)):
+        totalQuant += int(quantList[i][1])
+    newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),totalQuant]
+    fixedData[5].append(newListEntry)
+    fixedDataSave(fixedData)
 
     newDetailFrame.destroy()
     quantFrame.destroy()
@@ -651,6 +652,7 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
 
 def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     indexToDel = []
+
     #Getting indexes
     #print(quantList)
     for i in range(len(quantList)):
@@ -662,23 +664,23 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
 
     for i in range(len(quantList)):
         quantList[i][2] = int(quantList[i][2]) 
-    for i in range(len(quantList)):
+    for i in range(len(quantList)): 
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
             print("TOO BIG")
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
             indexToDel.append(i)
-            newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
-            fixedData[5].append(newListEntry)
         else:
-            newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",int(quantList[i][1])]
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
-            fixedData[5].append(newListEntry)
-            fixedDataSave(fixedData)
 
     for i in range(len(indexToDel)-1,-1,-1):
         del fixedData[5][quantList[indexToDel[i]][2]]
         fixedDataSave(fixedData)
-
+    totalQuant = 0
+    for i in range(len(quantList)):
+        totalQuant += int(quantList[i][1])
+    newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",totalQuant]
+    fixedData[5].append(newListEntry)
+    fixedDataSave(fixedData)
     newDetailFrame.destroy()
     quantFrame.destroy()
     checkInFrame.destroy()
