@@ -623,7 +623,6 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
             if quantList[i][0] == detailBox.get(j):
                 quantList[i][2] = indexList[j]
     quantList.sort(key=lambda x: x[2])
-    print(quantList)
     for i in range(len(quantList)):
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
             print("TOO BIG")
@@ -639,7 +638,6 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
             fixedDataSave(fixedData)
     
     for i in range(len(indexToDel)-1,-1,-1):
-        print("Deleting")
         del fixedData[5][quantList[indexToDel[i]][2]]
         fixedDataSave(fixedData)
 
@@ -659,7 +657,6 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
         for j in range(detailBox.size()):
             if quantList[i][0] == detailBox.get(j):
                 quantList[i][2] = indexList[j]
-    print(quantList)
 
     #Changing info in data
 
@@ -679,7 +676,6 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
             fixedDataSave(fixedData)
 
     for i in range(len(indexToDel)-1,-1,-1):
-        print("Deleting")
         del fixedData[5][quantList[indexToDel[i]][2]]
         fixedDataSave(fixedData)
 
