@@ -3,4 +3,4 @@ Item Number: |Test123|aefinwer|
 Number Checked in: |56|1|
 Number Checked out: |0|0|
 Default Sate: |95|1|
-Info: |Test123%}in{%WOR3K24NOQ?%---%%%---%1|Test123%}in{%63%---%%%---%1|Test123%}in{%7%%%%%1|Test123%}in{%17%%%%%1|Test123%}out{%5%%%%%0|Test123%}out{%5%%%%%1|Test123%}out{%5%%%%%1|Test123%}out{%5%%%%%1|Test123%}in{%werf3f35g%---%g34g345g35g%34g5%---%1|
+Info: |Test123%}out{%5%%%%%1|Test123%}out{%5%%%%%1|Test123%}in{%werf3f35g%---%g34g345g35g%34g5%---%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}in{%3%---%%%---%3|Test123%}in{%3%---%%%---%1|Test123%}in{%3%---%%%---%1|
