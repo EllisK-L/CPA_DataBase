@@ -580,7 +580,91 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
     else:
-        print("OK")
+
+        detailBox = Listbox(newDetailFrame, relief="solid", width=80, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
+        detailBox.grid(row=3, columnspan=100)
+        headerString = "Quantity"
+        headerLabel = Label(newDetailFrame,text=headerString,font='TkFixedFont')
+        headerLabel.grid(row=2,columnspan=100,sticky=W)
+        data = openDoc()
+
+        if len(data[5]) > 1:
+            for i in range(1,len(data[5])):
+                data[5][i] = data[5][i].split("%")
+        defaultState = int(data[4][indexToRead])
+        #-----------------------------
+        #Adding all detail data in data.txt to detail2 box
+        # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
+        
+        boxString = ""
+        indexList = []
+        detailList = []
+
+        boxString = 
+
+        #------------------------------
+        checkInFrame = Frame(root)
+        numOfFrames += 1
+        checkInFrame.grid(row=0,column=2)
+        titleLabel = Label(checkInFrame,text="Check Out Item(s)")
+        titleLabel.grid(row=0,column=0)
+        devider(checkInFrame,1,0)
+
+        techLabel = Label(checkInFrame,text="Tech Checking Item(s) out")
+        techLabel.grid(row=2,column=0)
+        techEntry = Entry(checkInFrame)
+        techEntry.grid(row=3,column=0)
+        devider(checkInFrame,4,0)
+
+        personLabel = Label(checkInFrame,text="Person Responsible For Item(s)")
+        personLabel.grid(row=5,column=0)
+        personEntry = Entry(checkInFrame)
+        personEntry.grid(row=6,column=0)
+        devider(checkInFrame,7,0)
+
+        whereLabel = Label(checkInFrame,text="Item Location")
+        whereLabel.grid(row=8,column=0)
+        whereEntry = Entry(checkInFrame)
+        whereEntry.grid(row=9,column=0)
+        devider(checkInFrame,10,0)
+
+        timePunchLabel = Label(checkInFrame,text="Time of Action")
+        timePunchLabel.grid(row=11,column=0)
+        timePunchEntry = Entry(checkInFrame)
+        timePunchEntry.grid(row=12,column=0)
+        devider(checkInFrame,13,0)
+
+        timeDueLabel = Label(checkInFrame,text="Time Item(s) are Due")
+        timeDueLabel.grid(row=14,column=0)
+        timeDueEntry = Entry(checkInFrame)
+        timeDueEntry.grid(row=15,column=0)
+        devider(checkInFrame,16,0)
+
+
+        #Choose Quantity Code------------------------------------------------------------------------------------------------
+
+        quantFrame = Frame(root)
+        numOfFrames += 1
+        quantFrame.grid(row=1,column=0,sticky=W,columnspan=150)
+
+        quantListBox = Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
+        quantListBox.grid(row=0,column=0,rowspan=5)
+
+        removeQuantButton = Button(quantFrame,text="Remove",fg="red")
+        removeQuantButton.grid(row=6,column=0)
+
+        quantEntryLabel = Label(quantFrame,text="Enter Quantity")
+        quantEntryLabel.grid(row=0,column=1)
+
+        quantEntry = Entry(quantFrame)
+        quantEntry.grid(row=1,column=1)
+        quantList = []
+        submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
+
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton.grid()
+        detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
 
 
