@@ -600,7 +600,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         indexList = []
         detailList = []
 
-        boxString = 
+        boxString = ""
 
         #------------------------------
         checkInFrame = Frame(root)
