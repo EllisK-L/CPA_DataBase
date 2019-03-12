@@ -592,6 +592,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
             for i in range(1,len(data[5])):
                 data[5][i] = data[5][i].split("%")
         defaultState = int(data[4][indexToRead])
+        detailBox.insert(END,defaultState)
         #-----------------------------
         #Adding all detail data in data.txt to detail2 box
         # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
@@ -662,7 +663,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
@@ -769,6 +770,28 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
     quantFrame.destroy()
     checkInFrame.destroy()
     setup()
+
+def finalSubmitDS(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
+    #Getting indexes
+    for i in range(len(fixedData[4])):
+        if fixedData[1][i] == itemNumber:
+            index = i
+            break
+
+    if int(fixedData[4][index]) < int(quantList[0][1]):
+        print("TOO BIG")
+    else:
+        fixedData[4][index] = int(fixedData[4][index]) - int(quantList[0][1])
+    newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),quantList[0][1]]
+    fixedData[5].append(newListEntry)
+    fixedDataSave(fixedData)
+
+    newDetailFrame.destroy()
+    quantFrame.destroy()
+    checkInFrame.destroy()
+    setup()
+    
+
 
 
 

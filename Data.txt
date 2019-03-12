@@ -2,5 +2,5 @@ Name: |Test|Jin's Phone|This Pencil Case|
 Item Number: |Test123|aefinwer|720|
 Number Checked in: |56|1|1|
 Number Checked out: |0|0|0|
-Default Sate: |95|1|1|
-Info: |Test123%}out{%5%%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}in{%3%---%%%---%1|Test123%}in{%eLLOSIU%---%%%---%1|Test123%}out{%mE%%%%%1|Test123%}out{%3?%%%%%1|Test123%}in{%ok?%---%%%---%1|Test123%}in{%2?%---%%okkkkkk%---%1|Test123%}out{%Ellis%Warren%Booth%Feb 13%March 12%1|
+Default Sate: |90|1|1|
+Info: |Test123%}out{%5%%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}in{%3%---%%%---%1|Test123%}in{%eLLOSIU%---%%%---%1|Test123%}out{%mE%%%%%1|Test123%}out{%3?%%%%%1|Test123%}in{%ok?%---%%%---%1|Test123%}in{%2?%---%%okkkkkk%---%1|Test123%}out{%Ellis%Warren%Booth%Feb 13%March 12%1|Test123%}out{%OOF%%%%%5|
