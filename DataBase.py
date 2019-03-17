@@ -1,10 +1,11 @@
 from tkinter import *
 import threading, time, os
+from tkinter import messagebox
 
 numOfFrames = 0
 
 root=Tk()
-root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
+#root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
 button_pic_1 = PhotoImage(file="Assets/button_1.png")
 
 #root.tk_setPalette(background='green', foreground='black',activeBackground='black', activeForeground="red")
@@ -174,7 +175,7 @@ def buttons(frame,searchBox,addFrame):
     deleteButton = Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
     deleteButton.grid(row=4,column=0)
 
-    detailButton = Button(frame,text="Details",relief="raised",height=2,width=10,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButton = Button(frame,text="Details",fg="black",highlightbackground="yellow",highlightthickness=10,relief="raised",height=2,width=10,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     detailButton.grid(row=4,column=3)
 
 #flat, groove, raised, ridge, solid, or sunken
@@ -213,20 +214,13 @@ def deleteInit(line,searchResultBox,searchFrame):
         if data[1][i] == tempText:
             indexToRead = i
 
-    uSure = Tk()
-    uSure.title("Attention!")
-    uSure.resizable(False,False)
-    uSure.geometry("250x75+450+400")
-    uSure.attributes("-topmost", True)
     textForUSure = "Are you sure you want to Delete\n" + data[0][indexToRead] + "?"
-    uSureText = Label(uSure,text=textForUSure)
-    uSureText.pack()
-    uSureYesButton = Button(uSure,text="Yes",height=2,width=7,command= lambda :deleteing("Y",indexToRead,searchResultBox,searchFrame,uSure))
-    uSureYesButton.pack(side=RIGHT)
-    uSureNoButton = Button(uSure, text="No",height=2,width=7,relief="solid",command= lambda :deleteing("N",indexToRead,searchResultBox,searchFrame,uSure))
-    uSureNoButton.pack(side=LEFT)
+    if messagebox.askyesno("CPA",textForUSure,icon="warning") == True:
+        deleteing("Y",indexToRead,searchResultBox,searchFrame)
+    else:
+        pass
 
-def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,newFrame):
+def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame):
     global numOfFrames
     writeData = ""
     data = openDoc()
@@ -243,7 +237,6 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,newFrame):
         setup()
     else:
         pass
-    newFrame.destroy()
     numOfFrames -= 1
 
 
