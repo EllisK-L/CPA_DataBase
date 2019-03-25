@@ -1,12 +1,44 @@
-from tkinter import *
+#from tkinter import *
 import threading, time, os
 from tkinter import messagebox
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
+import tkinter as tk
+
+class makeButtonImg:
+    def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc=""):
+        if tc == "":
+            tc = fg
+        self.totalSize = length,height
+        self.text = text
+        buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
+        #boarderImg = Image.new("RGBA",(length+10,height+10),"black")
+        #boarderImg = ImageDraw.Draw(boarderImg)
+        font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height))
+        buttonImgDraw = ImageDraw.Draw(buttonImg)
+        tL,tH = buttonImgDraw.textsize(text,font=font)
+        print("Text Length: ",tL)
+
+        if tL > length:
+            font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/3))
+            tL,tH = buttonImgDraw.textsize(text,font=font)
+            buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
+        else:
+            buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
+        print(tH)
+
+        #boarderImg.paste(buttonImg,(0,0))
+        buttonImg.show()
+        buttonImg.save("Assets/temp/oop.png","PNG")
+        button_pic_1 = tk.PhotoImage(file="Assets/buttonTexRaw.png")
+        self.buttonPic = tk.PhotoImage(file="Assets/temp/oop.png")
 
 numOfFrames = 0
 
-root=Tk()
+root=tk.Tk()
 #root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
-button_pic_1 = PhotoImage(file="Assets/buttonTexRaw.png")
+button_pic_1 = tk.PhotoImage(file="Assets/buttonTexRaw.png")
 
 root.tk_setPalette(background='gray13', foreground='white',activeBackground='red', activeForeground="red")
 
@@ -49,13 +81,13 @@ def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
     setup()
 
 def devider(frame,row,column):
-    devider = Label(frame)
+    devider = tk.Label(frame)
     devider.grid(row=row,column=column,columnspan=2)
 
 def searchSetup(frame):
     def searchSelect(evt):
                 value = searchResultBox.get(searchResultBox.curselection())
-    searchResultBox = Listbox(frame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
+    searchResultBox = tk.Listbox(frame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
     searchResultBox.grid(row=2,columnspan=100)
     data = openDoc()
     formatSearchBox(data,searchResultBox)
@@ -98,7 +130,7 @@ def setup():
                             #searchResultBox.insert(END,boxString)
                         boxString = ""
                     for i in range(len(finalList)):
-                        searchResultBox.insert(END,finalList[i])
+                        searchResultBox.insert(tk.END,finalList[i])
                         if i % 2 == 0:
                             searchResultBox.itemconfig(i, {"bg": "gray20"})
                     finalList = []
@@ -109,14 +141,14 @@ def setup():
 
     searchThread = threading.Thread(target=searchThreadFunc,args="")
     searchThread.start()
-    searchFrame = Frame(root)
+    searchFrame = tk.Frame(root)
     numOfFrames += 1
     searchFrame.grid(row=0,column=0)
 
-    searchLabel = Label(searchFrame,text="Search")
-    searchLabel.grid(stick=E)
+    searchLabel = tk.Label(searchFrame,text="Search")
+    searchLabel.grid(stick=tk.E)
 
-    searchBox = Entry(searchFrame,width=20)
+    searchBox = tk.Entry(searchFrame,width=20)
     searchBox.grid(row=0,column=1)
 
     searchHeaderData = ""
@@ -125,7 +157,7 @@ def setup():
         searchHeaderData += data[i][0]
         for j in range(25-len(data[i][0])):
             searchHeaderData += " "
-    searchHeader = Label(searchFrame,text=searchHeaderData,font='TkFixedFont')
+    searchHeader = tk.Label(searchFrame,text=searchHeaderData,font='TkFixedFont')
     searchHeader.grid(row=1,column=0,columnspan=20)
     searchResultBox = searchSetup(searchFrame)
 
@@ -133,36 +165,36 @@ def setup():
 
     #Add (right side)-----------------------------------------------
 
-    addFrame = Frame(root)
+    addFrame = tk.Frame(root)
     numOfFrames += 1
     addFrame.grid(row=0,column=1,columnspan=3)
 
-    addText = Label(addFrame,text="Add Item\n--------------------------------------")
+    addText = tk.Label(addFrame,text="Add Item\n--------------------------------------")
 
     addText.grid(row=0,column=0,columnspan=5)
 
-    nameLabel = Label(addFrame,text="Name")
-    nameLabel.grid(row=1,column=0,sticky=E)
-    nameBox = Entry(addFrame,width=20)
+    nameLabel = tk.Label(addFrame,text="Name")
+    nameLabel.grid(row=1,column=0,sticky=tk.E)
+    nameBox = tk.Entry(addFrame,width=20)
     nameBox.grid(row=1,column=2,columnspan=3)
 
     devider(addFrame,2,0)
 
-    itemIdLabel = Label(addFrame,text="Item ID")
-    itemIdLabel.grid(row=3,column=0,sticky=E)
-    itemIDBox = Entry(addFrame,width=20)
+    itemIdLabel = tk.Label(addFrame,text="Item ID")
+    itemIdLabel.grid(row=3,column=0,sticky=tk.E)
+    itemIDBox = tk.Entry(addFrame,width=20)
     itemIDBox.grid(row=3,column=2,columnspan=3,)
 
     devider(addFrame,4,0)
 
-    itemQuantLabel = Label(addFrame,text="Quantity")
-    itemQuantLabel.grid(row=5,column=0,sticky=E)
-    itemQuantBox = Entry(addFrame,width=20)
+    itemQuantLabel = tk.Label(addFrame,text="Quantity")
+    itemQuantLabel.grid(row=5,column=0,sticky=tk.E)
+    itemQuantBox = tk.Entry(addFrame,width=20)
     itemQuantBox.grid(row=5,column=2,columnspan=3,)
 
     devider(addFrame,6,0)
 
-    submitButton = Button(addFrame,text="Submit",command= lambda: addItem(nameBox.get(),itemIDBox.get(),itemQuantBox.get(),searchResultBox,searchFrame))
+    submitButton = tk.Button(addFrame,text="Submit",command= lambda: addItem(nameBox.get(),itemIDBox.get(),itemQuantBox.get(),searchResultBox,searchFrame))
     submitButton.grid(row=7)
 
     searchResultBox.bind('<Double-Button-1>',lambda eff: getDetails(searchResultBox.get(searchResultBox.curselection()),searchResultBox,searchFrame,addFrame))
@@ -172,10 +204,10 @@ def setup():
 
 
 def buttons(frame,searchBox,addFrame):
-    deleteButton = Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
+    deleteButton = tk.Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
     deleteButton.grid(row=4,column=0)
 
-    detailButton = Button(frame,text="Details",image=button_pic_1,fg="black",relief="raised",height=20,width=100,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButton = tk.Button(frame,text="Details",image=button_pic_1,fg="black",relief="raised",height=20,width=100,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     detailButton.grid(row=4,column=3)
 
 #flat, groove, raised, ridge, solid, or sunken
@@ -192,7 +224,7 @@ def formatSearchBox(data,box):
         finalList.append(boxString)
         boxString = ""
     for i in range(len(finalList)):
-        box.insert(END,finalList[i])
+        box.insert(tk.END,finalList[i])
         if i % 2 == 0:
             box.itemconfig(i, {"bg": "gray17"})
 
@@ -286,16 +318,16 @@ def getDetails(line,searchResultBox,frame,addFrame):
     for i in range(len(data[1])):
         if data[1][i] == tempText:
             indexToRead = i
-    detailFrame = Frame(root)
+    detailFrame = tk.Frame(root)
     numOfFrames += 1
     detailFrame.grid(row=0,column=0)
-    detailBox = Listbox(detailFrame,relief="solid",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
+    detailBox = tk.Listbox(detailFrame,relief="solid",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
     detailBox.grid(row=2,columnspan=100)
-    backButton = Button(detailFrame,text="Back",command=lambda :back(detailFrame,addFrame))
+    backButton = tk.Button(detailFrame,text="Back",command=lambda :back(detailFrame,addFrame))
     backButton.grid(row=0,column=0)
     nameString = data[0][indexToRead]
 
-    nameLabel = Label(detailFrame,text=nameString,font=("Comic Sans MS", 20))
+    nameLabel = tk.Label(detailFrame,text=nameString,font=("Comic Sans MS", 20))
     nameLabel.grid(row=1,column=50-(len(nameString)//2))
 
     numChecked = 0
@@ -311,7 +343,7 @@ def getDetails(line,searchResultBox,frame,addFrame):
         if data[5][i][1] == "}in{":
             numChecked += int(data[5][i][7])
     boxString += str(numChecked)
-    detailBox.insert(END,boxString)
+    detailBox.insert(tk.END,boxString)
     detailBox.itemconfigure(0,{"bg":"gray10"})
     
     numChecked = 0
@@ -323,18 +355,18 @@ def getDetails(line,searchResultBox,frame,addFrame):
         if data[5][i][1] == "}out{":
             numChecked += int(data[5][i][7])
     boxString += str(numChecked)
-    detailBox.insert(END,boxString)
+    detailBox.insert(tk.END,boxString)
 
     boxString = "'Limbo' State"
     for i in range(50-len(boxString)):
         boxString += " "
     boxString += str(data[4][indexToRead])
-    detailBox.insert(END,boxString)
+    detailBox.insert(tk.END,boxString)
 
 
     detailBox.bind("<Double-Button-1>",lambda eff: details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
 
-    detailButton = Button(detailFrame,text="Details",height=2,width=10,command=lambda :details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
+    detailButton = tk.Button(detailFrame,text="Details",height=2,width=10,command=lambda :details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
     detailButton.grid(row=3,column=3,columnspan=73)
     frame.destroy()
     numOfFrames -= 1
@@ -358,20 +390,20 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     addFrame.destroy()
     oldFrame.destroy()
     numOfFrames -= 2
-    newDetailFrame = Frame(root)
+    newDetailFrame = tk.Frame(root)
     numOfFrames += 1
-    newDetailFrame.grid(row=0,column=0,sticky=W)
-    backButton = Button(newDetailFrame, text="Back", command=back)
+    newDetailFrame.grid(row=0,column=0,sticky=tk.W)
+    backButton = tk.Button(newDetailFrame, text="Back", command=back)
     backButton.grid(row=0, column=0)
 
     data = openDoc()
 
     nameString = data[0][indexToRead]
 
-    nameLabel = Label(newDetailFrame,text=nameString,font=("Comic Sans MS", 20))
+    nameLabel = tk.Label(newDetailFrame,text=nameString,font=("Comic Sans MS", 20))
     nameLabel.grid(row=1,column=50-(len(nameString)//2))
 
-    returnDefaultButton = Button(newDetailFrame, text="Return to Default State", fg="red")
+    returnDefaultButton = tk.Button(newDetailFrame, text="Return to Default State", fg="red")
     returnDefaultButton.grid(row=4, column=0)
     if "Checked out" in line:
         temp = "Time Punched In"
@@ -386,11 +418,11 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 
     boxString = ""
     if "out" in line:
-        detailBox = Listbox(newDetailFrame, relief="solid", width=115, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
+        detailBox = tk.Listbox(newDetailFrame, relief="solid", width=115, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
         detailBox.grid(row=3, columnspan=100)
         headerString = "Signed Out By" + "        "+"Person Responsible"+ "   "+"Where It Is"+"          "+temp+tempSpace+"Time Due"+"             "+"Quantity"
-        headerLabel = Label(newDetailFrame,text=headerString,font='TkFixedFont')
-        headerLabel.grid(row=2,columnspan=100,sticky=W)    
+        headerLabel = tk.Label(newDetailFrame,text=headerString,font='TkFixedFont')
+        headerLabel.grid(row=2,columnspan=100,sticky=tk.W)    
 
         data = openDoc()
 
@@ -411,61 +443,61 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                     boxString += data[5][i][j]
                     for k in range(21-len(data[5][i][j])):
                         boxString += " "
-                detailBox.insert(END,boxString)
+                detailBox.insert(tk.END,boxString)
                 #if i % 2 == 0:
                 #    detailBox.itemconfig(i-1, {"bg": "gray10"})
                 detailList.append(boxString)
                 boxString = ""
                 counter += 1
         #------------------------------
-        checkInFrame = Frame(root)
+        checkInFrame = tk.Frame(root)
         numOfFrames += 1
         checkInFrame.grid(row=0,column=2)
-        titleLabel = Label(checkInFrame,text="Check In Item(s)")
+        titleLabel = tk.Label(checkInFrame,text="Check In Item(s)")
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
-        techLabel = Label(checkInFrame,text="Tech Checking Item(s) In")
+        techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) In")
         techLabel.grid(row=2,column=0)
-        techEntry = Entry(checkInFrame)
+        techEntry = tk.Entry(checkInFrame)
         techEntry.grid(row=3,column=0)
         devider(checkInFrame,4,0)
 
 
-        whereLabel = Label(checkInFrame,text="Item Location")
+        whereLabel = tk.Label(checkInFrame,text="Item Location")
         whereLabel.grid(row=8,column=0)
-        whereEntry = Entry(checkInFrame)
+        whereEntry = tk.Entry(checkInFrame)
         whereEntry.grid(row=9,column=0)
         devider(checkInFrame,10,0)
 
-        timePunchLabel = Label(checkInFrame,text="Time of Action")
+        timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
         timePunchLabel.grid(row=11,column=0)
-        timePunchEntry = Entry(checkInFrame)
+        timePunchEntry = tk.Entry(checkInFrame)
         timePunchEntry.grid(row=12,column=0)
         devider(checkInFrame,13,0)
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
-        quantFrame = Frame(root)
+        quantFrame = tk.Frame(root)
         numOfFrames += 1
-        quantFrame.grid(row=1,column=0,sticky=W,columnspan=150)
+        quantFrame.grid(row=1,column=0,sticky=tk.W,columnspan=150)
 
-        quantListBox = Listbox(quantFrame,width=115,height=5,font='TkFixedFont')
+        quantListBox = tk.Listbox(quantFrame,width=115,height=5,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
-        removeQuantButton = Button(quantFrame,text="Remove",fg="red")
+        removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
         removeQuantButton.grid(row=6,column=0)
 
-        quantEntryLabel = Label(quantFrame,text="Enter Quantity")
+        quantEntryLabel = tk.Label(quantFrame,text="Enter Quantity")
         quantEntryLabel.grid(row=0,column=1)
 
-        quantEntry = Entry(quantFrame)
+        quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     elif "in" in line:
@@ -476,11 +508,11 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 #
 #
 #
-        detailBox = Listbox(newDetailFrame, relief="solid", width=80, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
+        detailBox = tk.Listbox(newDetailFrame, relief="solid", width=80, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
         detailBox.grid(row=3, columnspan=100)
         headerString = "Signed Out By" +"        "+"Where It Is"+"          "+temp+tempSpace+"Quantity"
-        headerLabel = Label(newDetailFrame,text=headerString,font='TkFixedFont')
-        headerLabel.grid(row=2,columnspan=100,sticky=W)
+        headerLabel = tk.Label(newDetailFrame,text=headerString,font='TkFixedFont')
+        headerLabel.grid(row=2,columnspan=100,sticky=tk.W)
         data = openDoc()
 
         if len(data[5]) > 1:
@@ -503,89 +535,89 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                         boxString += data[5][i][j]
                         for k in range(21-len(data[5][i][j])):
                             boxString += " "
-                detailBox.insert(END,boxString)
+                detailBox.insert(tk.END,boxString)
                 #if i % 2 == 0:
                 #    detailBox.itemconfig(i-1, {"bg": "gray10"})
                 detailList.append(boxString)
                 boxString = ""
         #------------------------------
-        checkInFrame = Frame(root)
+        checkInFrame = tk.Frame(root)
         numOfFrames += 1
         checkInFrame.grid(row=0,column=2)
-        titleLabel = Label(checkInFrame,text="Check Out Item(s)")
+        titleLabel = tk.Label(checkInFrame,text="Check Out Item(s)")
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
-        techLabel = Label(checkInFrame,text="Tech Checking Item(s) out")
+        techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) out")
         techLabel.grid(row=2,column=0)
-        techEntry = Entry(checkInFrame)
+        techEntry = tk.Entry(checkInFrame)
         techEntry.grid(row=3,column=0)
         devider(checkInFrame,4,0)
 
-        personLabel = Label(checkInFrame,text="Person Responsible For Item(s)")
+        personLabel = tk.Label(checkInFrame,text="Person Responsible For Item(s)")
         personLabel.grid(row=5,column=0)
-        personEntry = Entry(checkInFrame)
+        personEntry = tk.Entry(checkInFrame)
         personEntry.grid(row=6,column=0)
         devider(checkInFrame,7,0)
 
-        whereLabel = Label(checkInFrame,text="Item Location")
+        whereLabel = tk.Label(checkInFrame,text="Item Location")
         whereLabel.grid(row=8,column=0)
-        whereEntry = Entry(checkInFrame)
+        whereEntry = tk.Entry(checkInFrame)
         whereEntry.grid(row=9,column=0)
         devider(checkInFrame,10,0)
 
-        timePunchLabel = Label(checkInFrame,text="Time of Action")
+        timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
         timePunchLabel.grid(row=11,column=0)
-        timePunchEntry = Entry(checkInFrame)
+        timePunchEntry = tk.Entry(checkInFrame)
         timePunchEntry.grid(row=12,column=0)
         devider(checkInFrame,13,0)
 
-        timeDueLabel = Label(checkInFrame,text="Time Item(s) are Due")
+        timeDueLabel = tk.Label(checkInFrame,text="Time Item(s) are Due")
         timeDueLabel.grid(row=14,column=0)
-        timeDueEntry = Entry(checkInFrame)
+        timeDueEntry = tk.Entry(checkInFrame)
         timeDueEntry.grid(row=15,column=0)
         devider(checkInFrame,16,0)
 
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
-        quantFrame = Frame(root)
+        quantFrame = tk.Frame(root)
         numOfFrames += 1
-        quantFrame.grid(row=1,column=0,sticky=W,columnspan=150)
+        quantFrame.grid(row=1,column=0,sticky=tk.W,columnspan=150)
 
-        quantListBox = Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
+        quantListBox = tk.Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
-        removeQuantButton = Button(quantFrame,text="Remove",fg="red")
+        removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
         removeQuantButton.grid(row=6,column=0)
 
-        quantEntryLabel = Label(quantFrame,text="Enter Quantity")
+        quantEntryLabel = tk.Label(quantFrame,text="Enter Quantity")
         quantEntryLabel.grid(row=0,column=1)
 
-        quantEntry = Entry(quantFrame)
+        quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
     else:
 
-        detailBox = Listbox(newDetailFrame, relief="solid", width=80, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
+        detailBox = tk.Listbox(newDetailFrame, relief="solid", width=80, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
         detailBox.grid(row=3, columnspan=100)
         headerString = "Quantity"
-        headerLabel = Label(newDetailFrame,text=headerString,font='TkFixedFont')
-        headerLabel.grid(row=2,columnspan=100,sticky=W)
+        headerLabel = tk.Label(newDetailFrame,text=headerString,font='TkFixedFont')
+        headerLabel.grid(row=2,columnspan=100,sticky=tk.W)
         data = openDoc()
 
         if len(data[5]) > 1:
             for i in range(1,len(data[5])):
                 data[5][i] = data[5][i].split("%")
         defaultState = int(data[4][indexToRead])
-        detailBox.insert(END,defaultState)
+        detailBox.insert(tk.END,defaultState)
         #-----------------------------
         #Adding all detail data in data.txt to detail2 box
         # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
@@ -597,66 +629,66 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         boxString = ""
 
         #------------------------------
-        checkInFrame = Frame(root)
+        checkInFrame = tk.Frame(root)
         numOfFrames += 1
         checkInFrame.grid(row=0,column=2)
-        titleLabel = Label(checkInFrame,text="Check Out Item(s)")
+        titleLabel = tk.Label(checkInFrame,text="Check Out Item(s)")
         titleLabel.grid(row=0,column=0)
         devider(checkInFrame,1,0)
 
-        techLabel = Label(checkInFrame,text="Tech Checking Item(s) out")
+        techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) out")
         techLabel.grid(row=2,column=0)
-        techEntry = Entry(checkInFrame)
+        techEntry = tk.Entry(checkInFrame)
         techEntry.grid(row=3,column=0)
         devider(checkInFrame,4,0)
 
-        personLabel = Label(checkInFrame,text="Person Responsible For Item(s)")
+        personLabel = tk.Label(checkInFrame,text="Person Responsible For Item(s)")
         personLabel.grid(row=5,column=0)
-        personEntry = Entry(checkInFrame)
+        personEntry = tk.Entry(checkInFrame)
         personEntry.grid(row=6,column=0)
         devider(checkInFrame,7,0)
 
-        whereLabel = Label(checkInFrame,text="Item Location")
+        whereLabel = tk.Label(checkInFrame,text="Item Location")
         whereLabel.grid(row=8,column=0)
-        whereEntry = Entry(checkInFrame)
+        whereEntry = tk.Entry(checkInFrame)
         whereEntry.grid(row=9,column=0)
         devider(checkInFrame,10,0)
 
-        timePunchLabel = Label(checkInFrame,text="Time of Action")
+        timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
         timePunchLabel.grid(row=11,column=0)
-        timePunchEntry = Entry(checkInFrame)
+        timePunchEntry = tk.Entry(checkInFrame)
         timePunchEntry.grid(row=12,column=0)
         devider(checkInFrame,13,0)
 
-        timeDueLabel = Label(checkInFrame,text="Time Item(s) are Due")
+        timeDueLabel = tk.Label(checkInFrame,text="Time Item(s) are Due")
         timeDueLabel.grid(row=14,column=0)
-        timeDueEntry = Entry(checkInFrame)
+        timeDueEntry = tk.Entry(checkInFrame)
         timeDueEntry.grid(row=15,column=0)
         devider(checkInFrame,16,0)
 
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
-        quantFrame = Frame(root)
+        quantFrame = tk.Frame(root)
         numOfFrames += 1
-        quantFrame.grid(row=1,column=0,sticky=W,columnspan=150)
+        quantFrame.grid(row=1,column=0,sticky=tk.W,columnspan=150)
 
-        quantListBox = Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
+        quantListBox = tk.Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
-        removeQuantButton = Button(quantFrame,text="Remove",fg="red")
+        removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
         removeQuantButton.grid(row=6,column=0)
 
-        quantEntryLabel = Label(quantFrame,text="Enter Quantity")
+        quantEntryLabel = tk.Label(quantFrame,text="Enter Quantity")
         quantEntryLabel.grid(row=0,column=1)
 
-        quantEntry = Entry(quantFrame)
+        quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
         submitCurrentQuant.grid(row=0,column=3,rowspan=2)
 
-        finishedButton = Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
@@ -671,12 +703,12 @@ def selectItemToQuant(detailBox,detailList,quantBox,userSelect,quantList,indexLi
         if userSelect == quantList[i][0]:
             inQuantList = True
     if inQuantList == False:
-        quantBox.insert(END,userSelect)
+        quantBox.insert(tk.END,userSelect)
         for i in range(detailBox.size()):
             if detailBox.get(i) == userSelect:
                 iTemp = i
         quantList.append([userSelect,0,iTemp])
-        quantBox.itemconfig(END, {"bg": "red"})
+        quantBox.itemconfig(tk.END, {"bg": "red"})
 
 def insertQuantToSelection(quantBox,quantEntry,quantList):
     currentSelection = quantBox.get(quantBox.curselection())

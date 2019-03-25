@@ -1,7 +1,6 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-import numpy as np
 import tkinter as tk
 import os
 
@@ -16,7 +15,7 @@ class makeButtonImg:
         self.totalSize = length,height
         self.text = text
         buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
-        boarderImg = Image.new("RGBA",(length+10,height+10),"black")
+        #boarderImg = Image.new("RGBA",(length+10,height+10),"black")
         #boarderImg = ImageDraw.Draw(boarderImg)
         font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height))
         buttonImgDraw = ImageDraw.Draw(buttonImg)
@@ -31,14 +30,14 @@ class makeButtonImg:
             buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
         print(tH)
 
-        boarderImg.paste(buttonImg,(0,0))
-        boarderImg.show()
-        boarderImg.save("Assets/temp/oop.png","PNG")
+        #boarderImg.paste(buttonImg,(0,0))
+        buttonImg.show()
+        buttonImg.save("Assets/temp/oop.png","PNG")
         button_pic_1 = tk.PhotoImage(file="Assets/buttonTexRaw.png")
         self.buttonPic = tk.PhotoImage(file="Assets/temp/oop.png")
 root = tk.Tk()
 
-oof = makeButtonImg(text="Hello",length=6000,height=4000)
+oof = makeButtonImg(text="Hello",length=100,height=100)
 testimg = tk.PhotoImage(file="Assets/temp/oop.png")
 button1 = tk.Button(root,image=oof.buttonPic,height=100,width=100,relief="flat")
 button1.pack()
