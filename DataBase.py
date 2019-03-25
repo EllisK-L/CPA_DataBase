@@ -6,9 +6,9 @@ numOfFrames = 0
 
 root=Tk()
 #root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
-button_pic_1 = PhotoImage(file="Assets/button_1.png")
+button_pic_1 = PhotoImage(file="Assets/buttonTexRaw.png")
 
-#root.tk_setPalette(background='green', foreground='black',activeBackground='black', activeForeground="red")
+root.tk_setPalette(background='gray13', foreground='white',activeBackground='red', activeForeground="red")
 
 root.resizable(False,False)
 if os.name ==  "nt":
@@ -175,7 +175,7 @@ def buttons(frame,searchBox,addFrame):
     deleteButton = Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
     deleteButton.grid(row=4,column=0)
 
-    detailButton = Button(frame,text="Details",fg="black",highlightbackground="yellow",highlightthickness=10,relief="raised",height=2,width=10,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButton = Button(frame,text="Details",image=button_pic_1,fg="black",relief="raised",height=20,width=100,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     detailButton.grid(row=4,column=3)
 
 #flat, groove, raised, ridge, solid, or sunken
