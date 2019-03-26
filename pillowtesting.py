@@ -10,37 +10,37 @@ import os
 
 class makeButtonImg:
     def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc=""):
-        if tc == "":
-            tc = fg
-        self.totalSize = length,height
-        self.text = text
-        buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
-        #boarderImg = Image.new("RGBA",(length+10,height+10),"black")
-        #boarderImg = ImageDraw.Draw(boarderImg)
-        font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height))
-        buttonImgDraw = ImageDraw.Draw(buttonImg)
-        tL,tH = buttonImgDraw.textsize(text,font=font)
-        print("Text Length: ",tL)
-
-        if tL > length:
-            font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/3))
+        FNF = True
+        fileName = str(str(length)+str(height)+str(text)+"png")
+        for f in os.listdir("Assets/temp"):
+            if f == fileName:
+                FNF = False
+                break
+        if FNF == True:
+            if tc == "":
+                tc = fg
+            self.totalSize = length,height
+            self.text = text
+            buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
+            font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height))
+            buttonImgDraw = ImageDraw.Draw(buttonImg)
             tL,tH = buttonImgDraw.textsize(text,font=font)
-            buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
-        else:
-            buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
-        print(tH)
-
-        #boarderImg.paste(buttonImg,(0,0))
-        buttonImg.show()
-        buttonImg.save("Assets/temp/oop.png","PNG")
-        button_pic_1 = tk.PhotoImage(file="Assets/buttonTexRaw.png")
-        self.buttonPic = tk.PhotoImage(file="Assets/temp/oop.png")
+            print("Text Length: ",tL)
+            if tL > length:
+                font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/3))
+                tL,tH = buttonImgDraw.textsize(text,font=font)
+                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            else:
+                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            print(tH)
+            buttonImg.show()
+            buttonImg.save(fileName,"PNG")
+        self.buttonPic = tk.PhotoImage(file=fileName)
 root = tk.Tk()
-
+pic = tk.PhotoImage(file="Assets/temp/100100Hello.png")
 oof = makeButtonImg(text="Hello",length=100,height=100)
-testimg = tk.PhotoImage(file="Assets/temp/oop.png")
-button1 = tk.Button(root,image=oof.buttonPic,height=100,width=100,relief="flat")
-button1.pack()
+button1 = tk.Button(root,image=pic,height=100,width=100,relief="flat")
+button1.grid()
 
 root.mainloop()
 

@@ -8,31 +8,33 @@ import tkinter as tk
 
 class makeButtonImg:
     def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc=""):
-        if tc == "":
-            tc = fg
-        self.totalSize = length,height
-        self.text = text
-        buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
-        #boarderImg = Image.new("RGBA",(length+10,height+10),"black")
-        #boarderImg = ImageDraw.Draw(boarderImg)
-        font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height))
-        buttonImgDraw = ImageDraw.Draw(buttonImg)
-        tL,tH = buttonImgDraw.textsize(text,font=font)
-        print("Text Length: ",tL)
-
-        if tL > length:
-            font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/3))
+        print(length)
+        FNF = True
+        fileName = str(str(length)+str(height)+str(text)+".png")
+        for f in os.listdir("Assets/temp"):
+            if f == fileName:
+                FNF = False
+                break
+        if FNF == True:
+            if tc == "":
+                tc = fg
+            self.totalSize = length,height
+            self.text = text
+            buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
+            font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height/2))
+            buttonImgDraw = ImageDraw.Draw(buttonImg)
             tL,tH = buttonImgDraw.textsize(text,font=font)
-            buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
-        else:
-            buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
-        print(tH)
-
-        #boarderImg.paste(buttonImg,(0,0))
-        buttonImg.show()
-        buttonImg.save("Assets/temp/oop.png","PNG")
-        button_pic_1 = tk.PhotoImage(file="Assets/buttonTexRaw.png")
-        self.buttonPic = tk.PhotoImage(file="Assets/temp/oop.png")
+            print("Text Length: ",tL)
+            if tL > length:
+                font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/4))
+                tL,tH = buttonImgDraw.textsize(text,font=font)
+                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            else:
+                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            print(tH)
+            #buttonImg.show()
+            buttonImg.save("Assets/temp/"+fileName,"PNG")
+        self.buttonPic = tk.PhotoImage(file="Assets/temp/"+fileName)
 
 numOfFrames = 0
 
@@ -193,7 +195,6 @@ def setup():
     itemQuantBox.grid(row=5,column=2,columnspan=3,)
 
     devider(addFrame,6,0)
-
     submitButton = tk.Button(addFrame,text="Submit",command= lambda: addItem(nameBox.get(),itemIDBox.get(),itemQuantBox.get(),searchResultBox,searchFrame))
     submitButton.grid(row=7)
 
@@ -207,7 +208,10 @@ def buttons(frame,searchBox,addFrame):
     deleteButton = tk.Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
     deleteButton.grid(row=4,column=0)
 
-    detailButton = tk.Button(frame,text="Details",image=button_pic_1,fg="black",relief="raised",height=20,width=100,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButtonImg = makeButtonImg(height=30,length=50,text="Details")
+    detailButton = tk.Button(frame,image=detailButtonImg.buttonPic,height=30,width=50,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButton.image = detailButtonImg.buttonPic
+
     detailButton.grid(row=4,column=3)
 
 #flat, groove, raised, ridge, solid, or sunken
