@@ -7,7 +7,9 @@ from PIL import ImageDraw
 import tkinter as tk
 
 class makeButtonImg:
-    def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc=""):
+    def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc="",textSize=15,yOffset=1,xOffset=1):
+        for f in os.listdir("Assets/temp"):
+            os.remove("Assets/temp/"+f)
         print(length)
         FNF = True
         fileName = str(str(length)+str(height)+str(text)+".png")
@@ -21,18 +23,20 @@ class makeButtonImg:
             self.totalSize = length,height
             self.text = text
             buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
-            font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height/2))
+            font = ImageFont.truetype("Assets/Fonts/ariblk.ttf",int(textSize))
+            #font = ImageFont.truetype("TkFixedFont",int(textSize))
             buttonImgDraw = ImageDraw.Draw(buttonImg)
             tL,tH = buttonImgDraw.textsize(text,font=font)
             print("Text Length: ",tL)
-            if tL > length:
-                font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/4))
-                tL,tH = buttonImgDraw.textsize(text,font=font)
-                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
-            else:
-                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            #if tL > length:
+            #    font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/4))
+            #    tL,tH = buttonImgDraw.textsize(text,font=font)
+            #    buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            #else:
+            #    buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
             print(tH)
             #buttonImg.show()
+            buttonImgDraw.text((int(xOffset*(length - tL)/2),int((height - tH)/2)*yOffset),text,(tc[0],tc[1],tc[2]),font=font)
             buttonImg.save("Assets/temp/"+fileName,"PNG")
         self.buttonPic = tk.PhotoImage(file="Assets/temp/"+fileName)
 
@@ -205,14 +209,16 @@ def setup():
 
 
 def buttons(frame,searchBox,addFrame):
-    deleteButton = tk.Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
+    deleteButtonImg = makeButtonImg(text="X",bg=[255,0,0],height=20,length=30,yOffset=-2)
+    deleteButton = tk.Button(frame,image=deleteButtonImg.buttonPic,command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
+    deleteButton.image = deleteButtonImg.buttonPic
     deleteButton.grid(row=4,column=0)
 
-    detailButtonImg = makeButtonImg(height=30,length=50,text="Details")
-    detailButton = tk.Button(frame,image=detailButtonImg.buttonPic,height=30,width=50,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButtonImg = makeButtonImg(height=35,length=85,text="Details",bg=[64,64,64],textSize=15,yOffset=.7)
+    detailButton = tk.Button(frame,image=detailButtonImg.buttonPic,height=35,width=85,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     detailButton.image = detailButtonImg.buttonPic
 
-    detailButton.grid(row=4,column=3)
+    detailButton.grid(row=4,column=4)
 
 #flat, groove, raised, ridge, solid, or sunken
 
