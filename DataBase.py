@@ -503,7 +503,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         numOfFrames += 1
         quantFrame.grid(row=1,column=0,sticky=tk.W,columnspan=150)
 
-        quantListBox = tk.Listbox(quantFrame,width=115,height=5,font='TkFixedFont')
+        quantListBox = tk.Listbox(quantFrame,width=115,height=6,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
         removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
@@ -515,10 +515,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
-        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
-
-        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        submitCurrentQuantImg = makeButtonImg(text="Submit Quantity",length=135,height=40,bg=[64,64,64])
+        submitCurrentQuant = tk.Button(quantFrame,image=submitCurrentQuantImg.buttonPic,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
+        devider(quantFrame,2,1)
+        submitCurrentQuant.grid(row=3,column=1,rowspan=2)
+        finishedButtonImg = makeButtonImg(text="Check In",length=90,height=30,bg=[64,64,64])
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton.image = finishedButtonImg.buttonPic
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     elif "in" in line:
@@ -606,7 +610,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         numOfFrames += 1
         quantFrame.grid(row=1,column=0,sticky=tk.W,columnspan=150)
 
-        quantListBox = tk.Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
+        quantListBox = tk.Listbox(quantFrame,width=80,height=6,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
         removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
@@ -618,10 +622,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
-        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
-
-        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        submitCurrentQuantImg = makeButtonImg(text="Submit Quantity",length=135,height=40,bg=[64,64,64])
+        submitCurrentQuant = tk.Button(quantFrame,image=submitCurrentQuantImg.buttonPic,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
+        devider(quantFrame,2,1)
+        submitCurrentQuant.grid(row=3,column=1,rowspan=2)
+        finishedButtonImg = makeButtonImg(text="Check Out",length=90,height=30,bg=[64,64,64])
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton.image = finishedButtonImg.buttonPic
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
@@ -706,10 +714,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
-        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
-
-        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        submitCurrentQuantImg = makeButtonImg(text="Submit Quantity",length=135,height=40,bg=[64,64,64])
+        submitCurrentQuant = tk.Button(quantFrame,image=submitCurrentQuantImg.buttonPic,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
+        devider(quantFrame,2,1)
+        submitCurrentQuant.grid(row=3,column=1,rowspan=2)
+        finishedButtonImg = makeButtonImg(text="Check In",length=90,height=30,bg=[64,64,64])
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton.image = finishedButtonImg.buttonPic
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
