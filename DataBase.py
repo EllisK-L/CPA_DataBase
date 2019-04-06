@@ -5,7 +5,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import tkinter as tk
-
+#hi
 class makeButtonImg:
     def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc="",textSize=15,yOffset=1,xOffset=1):
         print(length)
@@ -65,7 +65,7 @@ def openDoc():
     doc.close()
     return data
 
-def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
+def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame,addFrame):
     global numOfFrames
     writeData = ""
     data = openDoc()
@@ -84,6 +84,8 @@ def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
     searchResultBox.destroy()
     numOfFrames -= 1
     searchSetup(searchFrame)
+    searchFrame.destroy()
+    addFrame.destroy()
     setup()
 
 def devider(frame,row,column):
@@ -199,8 +201,8 @@ def setup():
     itemQuantBox.grid(row=5,column=2,columnspan=3,)
 
     devider(addFrame,6,0)
-    submitButtonImg = makeButtonImg(text="Submit",length=60,height=30,bg=[64,64,64],yOffset=.7)
-    submitButton = tk.Button(addFrame,relief="flat",image=submitButtonImg.buttonPic,command= lambda: addItem(nameBox.get(),itemIDBox.get(),itemQuantBox.get(),searchResultBox,searchFrame))
+    submitButtonImg = makeButtonImg(text="Submit",length=65,height=30,bg=[64,64,64],yOffset=.7)
+    submitButton = tk.Button(addFrame,relief="flat",image=submitButtonImg.buttonPic,command= lambda: addItem(nameBox.get(),itemIDBox.get(),itemQuantBox.get(),searchResultBox,searchFrame,addFrame))
     submitButton.image = submitButtonImg.buttonPic
     submitButton.grid(row=7,column=2)
 
@@ -209,12 +211,12 @@ def setup():
 
 
 def bugReport():
-    webbrowser.open("https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSMTgqgzFvQqfXbfNPHbtVMSGWFfgVgDVFprpjHCvDTvkLtGgRwNJFRbSppSWSmdQKWQrmQd")
+    webbrowser.open("https://docs.google.com/forms/d/e/1FAIpQLSeJ7VBd0OkONfw9PMq4C4dx7BhxgOXACpDsVKdUTAT7ICWApg/viewform?usp=sf_link")
 
 
 def buttons(frame,searchBox,addFrame):
     deleteButtonImg = makeButtonImg(text="X",bg=[255,0,0],height=20,length=30,yOffset=-2)
-    deleteButton = tk.Button(frame,relief="flat",image=deleteButtonImg.buttonPic,command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
+    deleteButton = tk.Button(frame,relief="flat",image=deleteButtonImg.buttonPic,command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     deleteButton.image = deleteButtonImg.buttonPic
     deleteButton.grid(row=4,column=0)
 
@@ -244,7 +246,7 @@ def formatSearchBox(data,box):
 
 
 
-def deleteInit(line,searchResultBox,searchFrame):
+def deleteInit(line,searchResultBox,searchFrame,addFrame):
     indexToRead = ""
     text = line
     text = text[30:]
@@ -262,11 +264,11 @@ def deleteInit(line,searchResultBox,searchFrame):
 
     textForUSure = "Are you sure you want to Delete\n" + data[0][indexToRead] + "?"
     if messagebox.askyesno("CPA",textForUSure,icon="warning") == True:
-        deleteing("Y",indexToRead,searchResultBox,searchFrame)
+        deleteing("Y",indexToRead,searchResultBox,searchFrame,addFrame)
     else:
         pass
 
-def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame):
+def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,addFrame):
     global numOfFrames
     writeData = ""
     data = openDoc()
@@ -284,7 +286,8 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame):
     else:
         pass
     numOfFrames -= 1
-
+    searchFrame.destroy()
+    addFrame.destroy()
 
 
 
@@ -506,7 +509,9 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantListBox = tk.Listbox(quantFrame,width=115,height=6,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
-        removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
+        removeQuantButtonImg = makeButtonImg(text="Remove Selection",length=160,height=35,bg=[255,0,0],yOffset=.8)
+        removeQuantButton = tk.Button(quantFrame,image=removeQuantButtonImg.buttonPic)
+        removeQuantButton.image = removeQuantButtonImg.buttonPic
         removeQuantButton.grid(row=6,column=0)
 
         quantEntryLabel = tk.Label(quantFrame,text="Enter Quantity")
@@ -878,7 +883,7 @@ def fixedDataSave(writeData):
 setup()
 
 bugReportImg = makeButtonImg(text="Report Bug",length=100,height=30)
-bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,command=bugReport)
+bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,relief="flat",command=bugReport)
 bugReportButton.image = bugReportImg.buttonPic
 bugReportButton.grid(sticky=tk.S,column=2,row=5)
 
