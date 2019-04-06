@@ -1,13 +1,13 @@
 #from tkinter import *
-import threading, time, os
+import threading, time, os, webbrowser
 from tkinter import messagebox
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import tkinter as tk
-
+#hi
 class makeButtonImg:
-    def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc=""):
+    def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc="",textSize=15,yOffset=1,xOffset=1):
         print(length)
         FNF = True
         fileName = str(str(length)+str(height)+str(text)+".png")
@@ -21,28 +21,31 @@ class makeButtonImg:
             self.totalSize = length,height
             self.text = text
             buttonImg = Image.new("RGBA",(length,height),(bg[0],bg[1],bg[2]))
-            font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(height/2))
+            font = ImageFont.truetype("Assets/Fonts/ariblk.ttf",int(textSize))
+            #font = ImageFont.truetype("TkFixedFont",int(textSize))
             buttonImgDraw = ImageDraw.Draw(buttonImg)
             tL,tH = buttonImgDraw.textsize(text,font=font)
             print("Text Length: ",tL)
-            if tL > length:
-                font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/4))
-                tL,tH = buttonImgDraw.textsize(text,font=font)
-                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
-            else:
-                buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            #if tL > length:
+            #    font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/4))
+            #    tL,tH = buttonImgDraw.textsize(text,font=font)
+            #    buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
+            #else:
+            #    buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
             print(tH)
             #buttonImg.show()
+            buttonImgDraw.text((int(xOffset*(length - tL)/2),int((height - tH)/2)*yOffset),text,(tc[0],tc[1],tc[2]),font=font)
             buttonImg.save("Assets/temp/"+fileName,"PNG")
         self.buttonPic = tk.PhotoImage(file="Assets/temp/"+fileName)
 
 numOfFrames = 0
 
+
 root=tk.Tk()
 #root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
 button_pic_1 = tk.PhotoImage(file="Assets/buttonTexRaw.png")
 
-root.tk_setPalette(background='gray13', foreground='white',activeBackground='red', activeForeground="red")
+root.tk_setPalette(background='gray13', foreground='white',activeBackground='black', activeForeground="red")
 
 root.resizable(False,False)
 if os.name ==  "nt":
@@ -51,6 +54,7 @@ if os.name == "mac":
     pass
 root.title("CPA Data Base")
 quitThread = False
+
 
 def openDoc():
     doc = open("Data.txt","r")
@@ -61,7 +65,7 @@ def openDoc():
     doc.close()
     return data
 
-def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
+def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame,addFrame):
     global numOfFrames
     writeData = ""
     data = openDoc()
@@ -80,6 +84,8 @@ def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame):
     searchResultBox.destroy()
     numOfFrames -= 1
     searchSetup(searchFrame)
+    searchFrame.destroy()
+    addFrame.destroy()
     setup()
 
 def devider(frame,row,column):
@@ -171,7 +177,7 @@ def setup():
     numOfFrames += 1
     addFrame.grid(row=0,column=1,columnspan=3)
 
-    addText = tk.Label(addFrame,text="Add Item\n--------------------------------------")
+    addText = tk.Label(addFrame,text="Add Item\n—————————————————")
 
     addText.grid(row=0,column=0,columnspan=5)
 
@@ -195,24 +201,30 @@ def setup():
     itemQuantBox.grid(row=5,column=2,columnspan=3,)
 
     devider(addFrame,6,0)
-    submitButton = tk.Button(addFrame,text="Submit",command= lambda: addItem(nameBox.get(),itemIDBox.get(),itemQuantBox.get(),searchResultBox,searchFrame))
-    submitButton.grid(row=7)
+    submitButtonImg = makeButtonImg(text="Submit",length=65,height=30,bg=[64,64,64],yOffset=.7)
+    submitButton = tk.Button(addFrame,relief="flat",image=submitButtonImg.buttonPic,command= lambda: addItem(nameBox.get(),itemIDBox.get(),itemQuantBox.get(),searchResultBox,searchFrame,addFrame))
+    submitButton.image = submitButtonImg.buttonPic
+    submitButton.grid(row=7,column=2)
 
     searchResultBox.bind('<Double-Button-1>',lambda eff: getDetails(searchResultBox.get(searchResultBox.curselection()),searchResultBox,searchFrame,addFrame))
     buttons(searchFrame,searchResultBox,addFrame)
 
 
+def bugReport():
+    webbrowser.open("https://docs.google.com/forms/d/e/1FAIpQLSeJ7VBd0OkONfw9PMq4C4dx7BhxgOXACpDsVKdUTAT7ICWApg/viewform?usp=sf_link")
 
 
 def buttons(frame,searchBox,addFrame):
-    deleteButton = tk.Button(frame,text="Delete",fg="red",command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame))
+    deleteButtonImg = makeButtonImg(text="X",bg=[255,0,0],height=20,length=30,yOffset=-2)
+    deleteButton = tk.Button(frame,relief="flat",image=deleteButtonImg.buttonPic,command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    deleteButton.image = deleteButtonImg.buttonPic
     deleteButton.grid(row=4,column=0)
 
-    detailButtonImg = makeButtonImg(height=30,length=50,text="Details")
-    detailButton = tk.Button(frame,image=detailButtonImg.buttonPic,height=30,width=50,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButtonImg = makeButtonImg(height=35,length=85,text="Details",bg=[64,64,64],textSize=15,yOffset=.7)
+    detailButton = tk.Button(frame,relief="flat",image=detailButtonImg.buttonPic,height=35,width=85,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     detailButton.image = detailButtonImg.buttonPic
 
-    detailButton.grid(row=4,column=3)
+    detailButton.grid(row=4,column=4)
 
 #flat, groove, raised, ridge, solid, or sunken
 
@@ -234,7 +246,7 @@ def formatSearchBox(data,box):
 
 
 
-def deleteInit(line,searchResultBox,searchFrame):
+def deleteInit(line,searchResultBox,searchFrame,addFrame):
     indexToRead = ""
     text = line
     text = text[30:]
@@ -252,11 +264,11 @@ def deleteInit(line,searchResultBox,searchFrame):
 
     textForUSure = "Are you sure you want to Delete\n" + data[0][indexToRead] + "?"
     if messagebox.askyesno("CPA",textForUSure,icon="warning") == True:
-        deleteing("Y",indexToRead,searchResultBox,searchFrame)
+        deleteing("Y",indexToRead,searchResultBox,searchFrame,addFrame)
     else:
         pass
 
-def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame):
+def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,addFrame):
     global numOfFrames
     writeData = ""
     data = openDoc()
@@ -274,7 +286,8 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame):
     else:
         pass
     numOfFrames -= 1
-
+    searchFrame.destroy()
+    addFrame.destroy()
 
 
 
@@ -327,8 +340,10 @@ def getDetails(line,searchResultBox,frame,addFrame):
     detailFrame.grid(row=0,column=0)
     detailBox = tk.Listbox(detailFrame,relief="solid",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
     detailBox.grid(row=2,columnspan=100)
-    backButton = tk.Button(detailFrame,text="Back",command=lambda :back(detailFrame,addFrame))
-    backButton.grid(row=0,column=0)
+    backButtonImg = makeButtonImg(text="←",bg=[64,64,64],textSize=50,length=80,height=30,yOffset=2)
+    backButton = tk.Button(detailFrame,relief="flat",image=backButtonImg.buttonPic,height=30,width=80,command=lambda :back(detailFrame,addFrame))
+    backButton.image = backButtonImg
+    backButton.grid(row=1,column=0)
     nameString = data[0][indexToRead]
 
     nameLabel = tk.Label(detailFrame,text=nameString,font=("Comic Sans MS", 20))
@@ -370,7 +385,9 @@ def getDetails(line,searchResultBox,frame,addFrame):
 
     detailBox.bind("<Double-Button-1>",lambda eff: details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
 
-    detailButton = tk.Button(detailFrame,text="Details",height=2,width=10,command=lambda :details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
+    detailButtonImg = makeButtonImg(height=35,length=85,text="Details",bg=[64,64,64],textSize=15,yOffset=.7)
+    detailButton = tk.Button(detailFrame,relief="flat",image=detailButtonImg.buttonPic,height=35,width=85,command=lambda :details2(detailFrame,detailBox.get(detailBox.curselection()),indexToRead,addFrame))
+    detailButton.image = detailButtonImg.buttonPic
     detailButton.grid(row=3,column=3,columnspan=73)
     frame.destroy()
     numOfFrames -= 1
@@ -397,8 +414,10 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     newDetailFrame = tk.Frame(root)
     numOfFrames += 1
     newDetailFrame.grid(row=0,column=0,sticky=tk.W)
-    backButton = tk.Button(newDetailFrame, text="Back", command=back)
-    backButton.grid(row=0, column=0)
+    backButtonImg = makeButtonImg(text="←",bg=[64,64,64],textSize=50,length=80,height=30,yOffset=2)
+    backButton = tk.Button(newDetailFrame,relief="flat",image=backButtonImg.buttonPic,height=30,width=80,command=back)
+    backButton.image = backButtonImg.buttonPic
+    backButton.grid(row=1, column=0,stick=tk.W)
 
     data = openDoc()
 
@@ -406,8 +425,9 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 
     nameLabel = tk.Label(newDetailFrame,text=nameString,font=("Comic Sans MS", 20))
     nameLabel.grid(row=1,column=50-(len(nameString)//2))
-
-    returnDefaultButton = tk.Button(newDetailFrame, text="Return to Default State", fg="red")
+    returnDefaultButtonImg = makeButtonImg(text="Reset Items",height=20,length=110,yOffset=-1,bg=[255,0,0])
+    returnDefaultButton = tk.Button(newDetailFrame,relief="flat",image=returnDefaultButtonImg.buttonPic, fg="red")
+    returnDefaultButton.image = returnDefaultButtonImg.buttonPic
     returnDefaultButton.grid(row=4, column=0)
     if "Checked out" in line:
         temp = "Time Punched In"
@@ -486,10 +506,12 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         numOfFrames += 1
         quantFrame.grid(row=1,column=0,sticky=tk.W,columnspan=150)
 
-        quantListBox = tk.Listbox(quantFrame,width=115,height=5,font='TkFixedFont')
+        quantListBox = tk.Listbox(quantFrame,width=115,height=6,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
-        removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
+        removeQuantButtonImg = makeButtonImg(text="Remove Selection",length=160,height=35,bg=[255,0,0],yOffset=.8)
+        removeQuantButton = tk.Button(quantFrame,image=removeQuantButtonImg.buttonPic)
+        removeQuantButton.image = removeQuantButtonImg.buttonPic
         removeQuantButton.grid(row=6,column=0)
 
         quantEntryLabel = tk.Label(quantFrame,text="Enter Quantity")
@@ -498,10 +520,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
-        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
-
-        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        submitCurrentQuantImg = makeButtonImg(text="Submit Quantity",length=135,height=40,bg=[64,64,64])
+        submitCurrentQuant = tk.Button(quantFrame,image=submitCurrentQuantImg.buttonPic,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
+        devider(quantFrame,2,1)
+        submitCurrentQuant.grid(row=3,column=1,rowspan=2)
+        finishedButtonImg = makeButtonImg(text="Check In",length=90,height=30,bg=[64,64,64])
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton.image = finishedButtonImg.buttonPic
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
     elif "in" in line:
@@ -589,7 +615,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         numOfFrames += 1
         quantFrame.grid(row=1,column=0,sticky=tk.W,columnspan=150)
 
-        quantListBox = tk.Listbox(quantFrame,width=80,height=5,font='TkFixedFont')
+        quantListBox = tk.Listbox(quantFrame,width=80,height=6,font='TkFixedFont')
         quantListBox.grid(row=0,column=0,rowspan=5)
 
         removeQuantButton = tk.Button(quantFrame,text="Remove",fg="red")
@@ -601,10 +627,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
-        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
-
-        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        submitCurrentQuantImg = makeButtonImg(text="Submit Quantity",length=135,height=40,bg=[64,64,64])
+        submitCurrentQuant = tk.Button(quantFrame,image=submitCurrentQuantImg.buttonPic,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
+        devider(quantFrame,2,1)
+        submitCurrentQuant.grid(row=3,column=1,rowspan=2)
+        finishedButtonImg = makeButtonImg(text="Check Out",length=90,height=30,bg=[64,64,64])
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton.image = finishedButtonImg.buttonPic
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
@@ -689,10 +719,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         quantEntry = tk.Entry(quantFrame)
         quantEntry.grid(row=1,column=1)
         quantList = []
-        submitCurrentQuant = tk.Button(quantFrame,text="Submit Quantity",height=3,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
-        submitCurrentQuant.grid(row=0,column=3,rowspan=2)
-
-        finishedButton = tk.Button(checkInFrame,text="Check Out",height=3,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        submitCurrentQuantImg = makeButtonImg(text="Submit Quantity",length=135,height=40,bg=[64,64,64])
+        submitCurrentQuant = tk.Button(quantFrame,image=submitCurrentQuantImg.buttonPic,command= lambda :insertQuantToSelection(quantListBox,quantEntry,quantList))
+        submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
+        devider(quantFrame,2,1)
+        submitCurrentQuant.grid(row=3,column=1,rowspan=2)
+        finishedButtonImg = makeButtonImg(text="Check In",length=90,height=30,bg=[64,64,64])
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+        finishedButton.image = finishedButtonImg.buttonPic
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
@@ -846,9 +880,16 @@ def fixedDataSave(writeData):
 
 
 #Main Code
-
 setup()
+
+bugReportImg = makeButtonImg(text="Report Bug",length=100,height=30)
+bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,relief="flat",command=bugReport)
+bugReportButton.image = bugReportImg.buttonPic
+bugReportButton.grid(sticky=tk.S,column=2,row=5)
 
 
 root.mainloop()
 
+for f in os.listdir("Assets/temp"):
+    os.remove("Assets/temp/"+f)
+print("Temp Deleted")
