@@ -6,6 +6,7 @@ from PIL import ImageFont
 from PIL import ImageDraw
 import tkinter as tk
 #hi
+
 class makeButtonImg:
     def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc="",textSize=15,yOffset=1,xOffset=1):
         print(length)
@@ -37,6 +38,7 @@ class makeButtonImg:
             buttonImgDraw.text((int(xOffset*(length - tL)/2),int((height - tH)/2)*yOffset),text,(tc[0],tc[1],tc[2]),font=font)
             buttonImg.save("Assets/temp/"+fileName,"PNG")
         self.buttonPic = tk.PhotoImage(file="Assets/temp/"+fileName)
+
 
 numOfFrames = 0
 
@@ -877,10 +879,29 @@ def fixedDataSave(writeData):
     doc.write(writeString)
     doc.close()   
 
+def passwordCheck(event):
+    if passwordEntry.get() == "":
+        logInFrame.destroy()
+        setup()
 
 
 #Main Code
-setup()
+logInFrame = tk.Frame(root)
+logInFrame.grid()
+logInLabel  = tk.Label(logInFrame,text="Log In")
+logInFrame.grid(row=0,column=0)
+
+userNameLabel = tk.Label(logInFrame,text="Username: ")
+userNameLabel.grid(row=0,column=0)
+userNameEntry = tk.Entry(logInFrame)
+userNameEntry.grid(row=1,column=1)
+#devider(logInFrame,2,0)
+passwordLabel = tk.Label(logInFrame,text="Password")
+passwordLabel.grid(row=3,column=0)
+passwordEntry = tk.Entry(logInFrame,show="*")
+passwordEntry.grid(row=4,column=1)
+passwordEntry.bind("<Return>",passwordCheck)
+
 
 bugReportImg = makeButtonImg(text="Report Bug",length=100,height=30)
 bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,relief="flat",command=bugReport)
