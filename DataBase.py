@@ -100,9 +100,9 @@ def devider(frame,row,column):
 
 def searchSelector(frame,searchResultBox,choice):
     print(choice.get())
-    if choice.get() == "main":
+    if choice.get() == "All Items":
         searchSetup(frame)
-    if choice.get() == "place":
+    if choice.get() == "Location":
         searchPlace(frame,searchResultBox)
 
 
@@ -116,7 +116,7 @@ def searchPlace(frame,searchResultBox):
     #[5][4]
     searchResultBox.delete(0,"end")
     #Getting all locations
-    for i in range(len(data[5])):
+    for i in range(1,len(data[5])):
         quitFlag = False
         for j in range(len(locations)):
             if data[5][i][4] == locations[j]:
@@ -134,7 +134,7 @@ def searchSetup(frame):
 def setup():
 
     global numOfFrames, quitThread, searchState, var
-    searchState = "main"
+    searchState = "All Items"
     quitThread = False
     def searchThreadFunc():
         global quitThread, searchState, var
@@ -144,7 +144,7 @@ def setup():
         finalList = []
         while quitThread == False:
             time.sleep(.1)
-            if var.get() == "main":
+            if var.get() == "All Items":
                 print("Threading")
                 try:
                     userSearch = str(searchBox.get())
@@ -218,9 +218,12 @@ def setup():
     searchResultBox.bind('<<ListboxSelect>>', searchSelect)
 
     var = tk.StringVar(root)
-    var.set("main")
-    searchOptions = tk.OptionMenu(searchFrame,var,"main","place",command=lambda x:searchSelector(searchFrame,searchResultBox,var))
-    searchOptions.grid(row=0,column=3)
+    var.set("Item Name")
+    searchOptions = tk.OptionMenu(searchFrame,var,"All Items","Location",command=lambda x:searchSelector(searchFrame,searchResultBox,var))
+    searchOptions.grid(row=0,column=3,sticky=tk.W)
+
+    searchOptionLabel = tk.Label(searchFrame,text="Search By: ")
+    searchOptionLabel.grid(row=0,column=2,sticky=tk.E)
 
     data = openDoc()
 

@@ -1,6 +1,6 @@
-Name: |Test|This Pencil Case|Jin Phone|AKG mic|Jin's Computer|
-Item Number: |Test123|720|JIN|AKG12|AEF|
-Number Checked in: |56|1|11|3|12|
-Number Checked out: |0|0|0|0|0|
-Default Sate: |80|1|8|3|12|
-Info: |Test123%}out{%5%%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}out{%Ellis%4%%%%1|Test123%}in{%3%---%%%---%1|Test123%}in{%eLLOSIU%---%%%---%1|Test123%}out{%mE%%%%%1|Test123%}out{%3?%%%%%1|Test123%}in{%ok?%---%%%---%1|Test123%}out{%Ellis%Warren%Booth%Feb 13%March 12%1|Test123%}out{%OOF%%%%%5|Test123%}out{%Not ELLLLIS%%%%%10|JIN%}out{%Jin%%%%%3|Test123%}out{%Ellis%Ellis%The Booth%Feb%%1|
+Name: |D5 Mic|
+Item Number: |AKGD5|
+Number Checked in: |7|
+Number Checked out: |0|
+Default Sate: |4|
+Info: |AKGD5%}out{%Ellis%Malcom%Stage Right%Feb 12 2019%Feb 18 2019%3|
