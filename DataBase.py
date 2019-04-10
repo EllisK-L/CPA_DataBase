@@ -5,7 +5,11 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import tkinter as tk
-#hi
+#
+#
+debug = True
+#
+#
 
 class makeButtonImg:
     def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc="",textSize=15,yOffset=1,xOffset=1):
@@ -94,56 +98,86 @@ def devider(frame,row,column):
     devider = tk.Label(frame)
     devider.grid(row=row,column=column,columnspan=2)
 
-def searchSetup(frame):
-    def searchSelect(evt):
-                value = searchResultBox.get(searchResultBox.curselection())
-    searchResultBox = tk.Listbox(frame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
-    searchResultBox.grid(row=2,columnspan=100)
+def searchSelector(frame,searchResultBox,choice):
+    print(choice.get())
+    if choice.get() == "main":
+        searchSetup(frame)
+    if choice.get() == "place":
+        searchPlace(frame,searchResultBox)
+
+
+def searchPlace(frame,searchResultBox):
+    locations = []
     data = openDoc()
-    formatSearchBox(data,searchResultBox)
-    searchResultBox.bind('<<ListboxSelect>>', searchSelect)
-    return searchResultBox
+    quitFlag = False
+    if len(data[5]) > 1:
+        for i in range(1,len(data[5])):
+            data[5][i] = data[5][i].split("%")
+    #[5][4]
+    searchResultBox.delete(0,"end")
+    #Getting all locations
+    for i in range(len(data[5])):
+        quitFlag = False
+        for j in range(len(locations)):
+            if data[5][i][4] == locations[j]:
+                quitFlag = True
+        if quitFlag == False:
+            locations.append(str(data[5][i][4]))
+            searchResultBox.insert(tk.END,locations[len(locations)-1])
+
+
+
+
+def searchSetup(frame):
+    pass
 
 def setup():
-    global numOfFrames
-    global quitThread
+
+    global numOfFrames, quitThread, searchState, var
+    searchState = "main"
     quitThread = False
     def searchThreadFunc():
-        global quitThread
+        global quitThread, searchState, var
+        pause = False
         data = openDoc()
         new = ""
         finalList = []
         while quitThread == False:
             time.sleep(.1)
-            try:
-                userSearch = str(searchBox.get())
-            except:
-                break
-            boxString = ""
-            old = new
-            new = userSearch
-            if new != old:
-                if userSearch == "":
-                    searchResultBox.delete(0,"end")
-                    formatSearchBox(data,searchResultBox)
-                else:
-                    searchResultBox.delete(0,"end")
-                    boxString = ""
-                    for i in range(1,len(data[0])):
-                        for j in range(len(data)-2):
-                            boxString += data[j][i].strip("\n")
-                            if j != 3:
-                                for k in range(30-len(str(data[j][i]))):
-                                    boxString += " "
-                        if userSearch.upper() in boxString.upper():
-                            finalList.append(boxString)
-                            #searchResultBox.insert(END,boxString)
+            if var.get() == "main":
+                print("Threading")
+                try:
+                    userSearch = str(searchBox.get())
+                except:
+                    break
+                boxString = ""
+                old = new
+                new = userSearch
+                if new != old or pause == True:
+                    if userSearch == "":
+                        searchResultBox.delete(0,"end")
+                        formatSearchBox(data,searchResultBox)
+                    else:
+                        searchResultBox.delete(0,"end")
                         boxString = ""
-                    for i in range(len(finalList)):
-                        searchResultBox.insert(tk.END,finalList[i])
-                        if i % 2 == 0:
-                            searchResultBox.itemconfig(i, {"bg": "gray20"})
-                    finalList = []
+                        for i in range(1,len(data[0])):
+                            for j in range(len(data)-2):
+                                boxString += data[j][i].strip("\n")
+                                if j != 3:
+                                    for k in range(30-len(str(data[j][i]))):
+                                        boxString += " "
+                            if userSearch.upper() in boxString.upper():
+                                finalList.append(boxString)
+                                #searchResultBox.insert(END,boxString)
+                            boxString = ""
+                        for i in range(len(finalList)):
+                            searchResultBox.insert(tk.END,finalList[i])
+                            if i % 2 == 0:
+                                searchResultBox.itemconfig(i, {"bg": "gray20"})
+                        finalList = []
+                pause = False
+            else:
+                pause = True
 
 
     
@@ -161,15 +195,32 @@ def setup():
     searchBox = tk.Entry(searchFrame,width=20)
     searchBox.grid(row=0,column=1)
 
+
     searchHeaderData = ""
     data = openDoc()
+    if len(data[5]) > 1:
+        for i in range(1,len(data[5])):
+            data[5][i] = data[5][i].split("%")
+
     for i in range(0,len(data)-2):
         searchHeaderData += data[i][0]
         for j in range(25-len(data[i][0])):
             searchHeaderData += " "
+
     searchHeader = tk.Label(searchFrame,text=searchHeaderData,font='TkFixedFont')
     searchHeader.grid(row=1,column=0,columnspan=20)
-    searchResultBox = searchSetup(searchFrame)
+    def searchSelect(evt):
+                value = searchResultBox.get(searchResultBox.curselection())
+    searchResultBox = tk.Listbox(searchFrame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
+    searchResultBox.grid(row=2,columnspan=100)
+    data = openDoc()
+    formatSearchBox(data,searchResultBox)
+    searchResultBox.bind('<<ListboxSelect>>', searchSelect)
+
+    var = tk.StringVar(root)
+    var.set("main")
+    searchOptions = tk.OptionMenu(searchFrame,var,"main","place",command=lambda x:searchSelector(searchFrame,searchResultBox,var))
+    searchOptions.grid(row=0,column=3)
 
     data = openDoc()
 
@@ -885,28 +936,32 @@ def passwordCheck(event):
         setup()
 
 
+
 #Main Code
-logInFrame = tk.Frame(root)
-logInFrame.grid()
-logInLabel  = tk.Label(logInFrame,text="Log In")
-logInFrame.grid(row=0,column=0)
+if debug == False:
+    logInFrame = tk.Frame(root)
+    logInFrame.grid()
+    logInLabel  = tk.Label(logInFrame,text="Log In")
+    logInFrame.grid(row=0,column=0)
 
-userNameLabel = tk.Label(logInFrame,text="Username: ")
-userNameLabel.grid(row=0,column=0)
-userNameEntry = tk.Entry(logInFrame)
-userNameEntry.grid(row=1,column=1)
-#devider(logInFrame,2,0)
-passwordLabel = tk.Label(logInFrame,text="Password")
-passwordLabel.grid(row=3,column=0)
-passwordEntry = tk.Entry(logInFrame,show="*")
-passwordEntry.grid(row=4,column=1)
-passwordEntry.bind("<Return>",passwordCheck)
+    userNameLabel = tk.Label(logInFrame,text="Username: ")
+    userNameLabel.grid(row=0,column=0)
+    userNameEntry = tk.Entry(logInFrame)
+    userNameEntry.grid(row=1,column=1)
+    #devider(logInFrame,2,0)
+    passwordLabel = tk.Label(logInFrame,text="Password")
+    passwordLabel.grid(row=3,column=0)
+    passwordEntry = tk.Entry(logInFrame,show="*")
+    passwordEntry.grid(row=4,column=1)
+    passwordEntry.bind("<Return>",passwordCheck)
 
 
-bugReportImg = makeButtonImg(text="Report Bug",length=100,height=30)
-bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,relief="flat",command=bugReport)
-bugReportButton.image = bugReportImg.buttonPic
-bugReportButton.grid(sticky=tk.S,column=2,row=5)
+    bugReportImg = makeButtonImg(text="Report Bug",length=100,height=30)
+    bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,relief="flat",command=bugReport)
+    bugReportButton.image = bugReportImg.buttonPic
+    bugReportButton.grid(sticky=tk.S,column=2,row=5)
+else:
+    setup()
 
 
 root.mainloop()
