@@ -7,7 +7,7 @@ from PIL import ImageDraw
 import tkinter as tk
 #
 #
-debug = True
+debug = False
 #
 #
 
@@ -45,7 +45,7 @@ class makeButtonImg:
 
 
 numOfFrames = 0
-
+font = ImageFont.truetype("Assets/Fonts/ariblk.ttf",int(20))
 
 root=tk.Tk()
 #root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
@@ -62,6 +62,7 @@ root.title("CPA Data Base")
 quitThread = False
 
 
+
 def openDoc():
     doc = open("Data.txt","r")
     data = doc.readlines()
@@ -73,6 +74,19 @@ def openDoc():
 
 def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame,addFrame):
     global numOfFrames
+    entryList = [itemName,itemID,itemQuant]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
+    try:
+        if int(itemQuant) <= 0:
+            messagebox.showwarning("Invalid Quantity","You Must Use an Integer Greater Than 0")
+            return
+    except:
+        messagebox.showwarning("Invalid Quantity","You Must Use an Integer Greater Than 0")
+        return
+
     writeData = ""
     data = openDoc()
     data[0].append(itemName)
@@ -218,7 +232,7 @@ def setup():
     searchResultBox.bind('<<ListboxSelect>>', searchSelect)
 
     var = tk.StringVar(root)
-    var.set("Item Name")
+    var.set("All Items")
     searchOptions = tk.OptionMenu(searchFrame,var,"All Items","Location",command=lambda x:searchSelector(searchFrame,searchResultBox,var))
     searchOptions.grid(row=0,column=3,sticky=tk.W)
 
@@ -285,11 +299,23 @@ def buttons(frame,searchBox,addFrame):
 #flat, groove, raised, ridge, solid, or sunken
 
 def formatSearchBox(data,box):
+    if len(data[5]) > 1:
+        for i in range(1,len(data[5])):
+            data[5][i] = data[5][i].split("%")
+    for i in range(1,len(data[1])):
+        data[2][i] = 0 
+        data[3][i] = 0
+        #for j in range(1,len(data[5])):
+        #    if data[5][j][0] == data[1][i]:
+        #        if data[5][j][1] == "}out{":
+        #            data[3][i] += int(data[5][j][7])
+        #        else:
+        #            data[2][j] += int(data[5][j][7])
     finalList = []
     boxString = ""
     for i in range(1,len(data[0])):
         for j in range(len(data)-2):
-            boxString += data[j][i].strip("\n")
+            boxString += str(data[j][i]).strip("\n")
             if j != 3:
                 for k in range(30-len(str(data[j][i]))):
                     boxString += " "
@@ -348,9 +374,9 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,addFrame):
 
 
 
+
 def getDetails(line,searchResultBox,frame,addFrame):
-    global numOfFrames
-    global quitThread
+    global numOfFrames, quitThread, searchState
     quitThread = True
     indexToRead = ""
     text = line
@@ -401,9 +427,10 @@ def getDetails(line,searchResultBox,frame,addFrame):
     backButton.image = backButtonImg
     backButton.grid(row=1,column=0)
     nameString = data[0][indexToRead]
-
-    nameLabel = tk.Label(detailFrame,text=nameString,font=("Comic Sans MS", 20))
-    nameLabel.grid(row=1,column=50-(len(nameString)//2))
+    itemID = data[1][indexToRead]
+    oof = ImageFont.truetype("Assets/Fonts/ariblk.ttf",int(20))
+    nameLabel = tk.Label(detailFrame,text=nameString,font=("Assets/Fonts/ariblk.ttf",20))
+    nameLabel.grid(row=1,column=48-(len(nameString)//2))
 
     numChecked = 0
 
@@ -415,7 +442,7 @@ def getDetails(line,searchResultBox,frame,addFrame):
     for i in range(50-len(boxString)):
         boxString += " "
     for i in range(1,len(data[5])):
-        if data[5][i][1] == "}in{":
+        if data[5][i][1] == "}in{" and data[5][i][0] == itemID:
             numChecked += int(data[5][i][7])
     boxString += str(numChecked)
     detailBox.insert(tk.END,boxString)
@@ -427,7 +454,7 @@ def getDetails(line,searchResultBox,frame,addFrame):
     for i in range(50-len(boxString)):
         boxString += " "
     for i in range(1,len(data[5])):
-        if data[5][i][1] == "}out{":
+        if data[5][i][1] == "}out{"and data[5][i][0] == itemID:
             numChecked += int(data[5][i][7])
     boxString += str(numChecked)
     detailBox.insert(tk.END,boxString)
@@ -478,8 +505,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     data = openDoc()
 
     nameString = data[0][indexToRead]
-
-    nameLabel = tk.Label(newDetailFrame,text=nameString,font=("Comic Sans MS", 20))
+    nameLabel = tk.Label(newDetailFrame,text=nameString,font=("Assets/Fonts/ariblk.ttf", 20))
     nameLabel.grid(row=1,column=50-(len(nameString)//2))
     returnDefaultButtonImg = makeButtonImg(text="Reset Items",height=20,length=110,yOffset=-1,bg=[255,0,0])
     returnDefaultButton = tk.Button(newDetailFrame,relief="flat",image=returnDefaultButtonImg.buttonPic, fg="red")
@@ -821,6 +847,11 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
 def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     indexToDel = []
+    entryList = [who.get(),person.get(),timeDue.get(),timePunch.get(),where.get()]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
     #Getting indexes
     for i in range(len(quantList)):
         for j in range(detailBox.size()):
@@ -856,7 +887,11 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
 
 def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     indexToDel = []
-
+    entryList = [who.get(),timePunch.get(),where.get()]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
     #Getting indexes
     #print(quantList)
     for i in range(len(quantList)):
@@ -892,6 +927,11 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
 
 def finalSubmitDS(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     #Getting indexes
+    entryList = [who.get(),person.get(),timeDue.get(),timePunch.get(),where.get()]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
     for i in range(len(fixedData[4])):
         if fixedData[1][i] == itemNumber:
             index = i
@@ -910,9 +950,7 @@ def finalSubmitDS(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunc
     checkInFrame.destroy()
     setup()
     
-
-
-
+    
 
 
 

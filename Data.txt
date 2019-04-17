@@ -1,6 +1,6 @@
-Name: |D5 Mic|
-Item Number: |AKGD5|
-Number Checked in: |7|
-Number Checked out: |0|
-Default Sate: |4|
-Info: |AKGD5%}out{%Ellis%Malcom%Stage Right%Feb 12 2019%Feb 18 2019%3|
+Name: |D5 Mic|Laptop|Ellis|
+Item Number: |AKGD5|LAPTOP1|NUB|
+Number Checked in: |7|5|5|
+Number Checked out: |0|0|0|
+Default Sate: |3|5|5|
+Info: |AKGD5%}out{%Ellis%Ellisagain%Booth%Feb12%Feb13%1|AKGD5%}in{%Ellis%---%Warren%Feb13%---%1|
