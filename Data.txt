@@ -3,4 +3,4 @@ Item Number: |AKGD5|LAPTOP1|NUB|
 Number Checked in: |7|5|5|
 Number Checked out: |0|0|0|
 Default Sate: |3|5|5|
-Info: |AKGD5%}out{%Ellis%Ellisagain%Booth%Feb12%Feb13%1|AKGD5%}in{%Ellis%---%Warren%Feb13%---%1|
+Info: |AKGD5%}in{%Ellis%---%Warren%Feb13%---%1|AKGD5%}out{%Ellis%Warren%Booth%Feb%Feb1%1|

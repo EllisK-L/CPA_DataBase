@@ -563,9 +563,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 boxString = ""
                 counter += 1
         #------------------------------
-        testVar = "In"
-        if testVar == "In":
-            checkInForm(checkInFrame)
+
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
         quantFrame = tk.Frame(root)
@@ -592,6 +590,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         devider(quantFrame,2,1)
         submitCurrentQuant.grid(row=3,column=1,rowspan=2)
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
+        testVar = "OUT"
+        inToggleButton = tk.Checkbutton(root,text="Check In",selectcolor="red",bg="gray13")
+        inToggleButton.grid()
+        if testVar == "In":
+            checkInForm(checkInFrame)
+        else:
+            checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame)
+
     elif "in" in line:
 
 
@@ -633,43 +639,8 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 detailList.append(boxString)
                 boxString = ""
         #------------------------------
-        checkInFrame = tk.Frame(root)
-        numOfFrames += 1
-        checkInFrame.grid(row=0,column=2)
-        titleLabel = tk.Label(checkInFrame,text="Check Out Item(s)")
-        titleLabel.grid(row=0,column=0)
-        devider(checkInFrame,1,0)
 
-        techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) out")
-        techLabel.grid(row=2,column=0)
-        techEntry = tk.Entry(checkInFrame)
-        techEntry.grid(row=3,column=0)
-        devider(checkInFrame,4,0)
-
-        personLabel = tk.Label(checkInFrame,text="Person Responsible For Item(s)")
-        personLabel.grid(row=5,column=0)
-        personEntry = tk.Entry(checkInFrame)
-        personEntry.grid(row=6,column=0)
-        devider(checkInFrame,7,0)
-
-        whereLabel = tk.Label(checkInFrame,text="Item Location")
-        whereLabel.grid(row=8,column=0)
-        whereEntry = tk.Entry(checkInFrame)
-        whereEntry.grid(row=9,column=0)
-        devider(checkInFrame,10,0)
-
-        timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
-        timePunchLabel.grid(row=11,column=0)
-        timePunchEntry = tk.Entry(checkInFrame)
-        timePunchEntry.grid(row=12,column=0)
-        devider(checkInFrame,13,0)
-
-        timeDueLabel = tk.Label(checkInFrame,text="Time Item(s) are Due")
-        timeDueLabel.grid(row=14,column=0)
-        timeDueEntry = tk.Entry(checkInFrame)
-        timeDueEntry.grid(row=15,column=0)
-        devider(checkInFrame,16,0)
-
+        #Put If statement here!
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
@@ -694,10 +665,6 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
         devider(quantFrame,2,1)
         submitCurrentQuant.grid(row=3,column=1,rowspan=2)
-        finishedButtonImg = makeButtonImg(text="Check Out",length=90,height=30,bg=[64,64,64])
-        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
-        finishedButton.image = finishedButtonImg.buttonPic
-        finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
     else:
@@ -792,6 +759,46 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
+
+def checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame):
+    titleLabel = tk.Label(checkInFrame,text="Check Out Item(s)")
+    titleLabel.grid(row=0,column=0)
+    devider(checkInFrame,1,0)
+
+    techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) out")
+    techLabel.grid(row=2,column=0)
+    techEntry = tk.Entry(checkInFrame)
+    techEntry.grid(row=3,column=0)
+    devider(checkInFrame,4,0)
+
+    personLabel = tk.Label(checkInFrame,text="Person Responsible For Item(s)")
+    personLabel.grid(row=5,column=0)
+    personEntry = tk.Entry(checkInFrame)
+    personEntry.grid(row=6,column=0)
+    devider(checkInFrame,7,0)
+
+    whereLabel = tk.Label(checkInFrame,text="Item Location")
+    whereLabel.grid(row=8,column=0)
+    whereEntry = tk.Entry(checkInFrame)
+    whereEntry.grid(row=9,column=0)
+    devider(checkInFrame,10,0)
+
+    timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
+    timePunchLabel.grid(row=11,column=0)
+    timePunchEntry = tk.Entry(checkInFrame)
+    timePunchEntry.grid(row=12,column=0)
+    devider(checkInFrame,13,0)
+
+    timeDueLabel = tk.Label(checkInFrame,text="Time Item(s) are Due")
+    timeDueLabel.grid(row=14,column=0)
+    timeDueEntry = tk.Entry(checkInFrame)
+    timeDueEntry.grid(row=15,column=0)
+    devider(checkInFrame,16,0)
+
+    finishedButtonImg = makeButtonImg(text="Check Out",length=90,height=30,bg=[64,64,64])
+    finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+    finishedButton.image = finishedButtonImg.buttonPic
+    finishedButton.grid()
 
 def checkInForm(checkInFrame):
     #checkInFrame.grid_forget()
