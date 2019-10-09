@@ -1,6 +1,6 @@
-Name: |D5 Mic|Laptop|Ellis|
-Item Number: |AKGD5|LAPTOP1|NUB|
-Number Checked in: |7|5|5|
-Number Checked out: |0|0|0|
-Default Sate: |0|2|0|
-Info: |AKGD5%}in{%Ellis%---%Booth%%---%1|LAPTOP1%}out{%Work, Yes?%%%%%1|AKGD5%}out{%%%%%%0|AKGD5%}in{%Ellis%---%House%Feb12%---%1|LAPTOP1%}out{%Ellis%Booth%%%%1|LAPTOP1%}out{%Ellis%Boothagain%%%%0|LAPTOP1%}in{%Ellis%---%BoothHouseGen134w4gt%24t%---%1|
+Name: |T200 Thruster|
+Item Number: |T200|
+Number Checked in: |5|
+Number Checked out: |0|
+Default Sate: |5|
+Info: |LAPTOP1%}out{%Work, Yes?%%%%%1|AKGD5%}out{%%%%%%0|LAPTOP1%}out{%Ellis%Booth%%%%1|LAPTOP1%}out{%Ellis%Boothagain%%%%0|LAPTOP1%}in{%Ellis%---%BoothHouseGen134w4gt%24t%---%1|AKGD5%}in{%Ellis%---%Booth%Feb12%---%2|

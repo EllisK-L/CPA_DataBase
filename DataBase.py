@@ -96,7 +96,6 @@ def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame,addFrame):
     doc.close()
     searchResultBox.destroy()
     numOfFrames -= 1
-    searchSetup(searchFrame)
     searchFrame.destroy()
     addFrame.destroy()
     setup()
@@ -108,7 +107,7 @@ def devider(frame,row,column):
 def searchSelector(frame,searchResultBox,choice):
     print(choice.get())
     if choice.get() == "All Items":
-        searchSetup(frame)
+        pass
     if choice.get() == "Location":
         searchPlace(frame,searchResultBox)
 
@@ -134,64 +133,55 @@ def searchPlace(frame,searchResultBox):
 
 
 
-
-def searchSetup(frame):
-    pass
-
 def setup():
-
     global numOfFrames, quitThread, searchState, var
     searchState = "All Items"
     quitThread = False
-    def searchThreadFunc():
+    def searchThreadFunc(event):
         global quitThread, searchState, var
-        pause = False
+        print(event.char)
         data = openDoc()
-        new = ""
         finalList = []
-        while quitThread == False:
-            time.sleep(.1)
-            if var.get() == "All Items":
-                print("Threading")
-                try:
-                    userSearch = str(searchBox.get())
-                except:
-                    break
-                boxString = ""
-                old = new
-                new = userSearch
-                if new != old or pause == True:
-                    if userSearch == "":
-                        searchResultBox.delete(0,"end")
-                        formatSearchBox(data,searchResultBox)
-                    else:
-                        searchResultBox.delete(0,"end")
-                        boxString = ""
-                        for i in range(1,len(data[0])):
-                            for j in range(len(data)-2):
-                                boxString += data[j][i].strip("\n")
-                                if j != 3:
-                                    for k in range(30-len(str(data[j][i]))):
-                                        boxString += " "
-                            if userSearch.upper() in boxString.upper():
-                                finalList.append(boxString)
-                                #searchResultBox.insert(END,boxString)
-                            boxString = ""
-                        for i in range(len(finalList)):
-                            searchResultBox.insert(tk.END,finalList[i])
-                            if i % 2 == 0:
-                                searchResultBox.itemconfig(i, {"bg": "gray20"})
-                        finalList = []
-                pause = False
+        if var.get() == "All Items":
+            print("|"+"SearchBox:"+searchBox.get()+str(event.char)+"|")
+            try:
+                userSearch = searchBox.get()+str(event.char)
+                print(len(userSearch))
+            except:
+                return
+            if len(str(searchBox.get())) <= 1 and event.keysym == "BackSpace":
+                print("YES")
+                userSearch = ""
             else:
-                pause = True
+                pass
+            boxString = ""
+            if userSearch == "":
+                searchResultBox.delete(0,"end")
+                formatSearchBox(data,searchResultBox)
+            else:
+                searchResultBox.delete(0,"end")
+                boxString = ""
+                for i in range(1,len(data[0])):
+                    for j in range(len(data)-2):
+                        boxString += data[j][i].strip("\n")
+                        if j != 3:
+                            for k in range(30-len(str(data[j][i]))):
+                                boxString += " "
+                    if userSearch.upper() in boxString.upper():
+                        finalList.append(boxString)
+                        #searchResultBox.insert(END,boxString)
+                    boxString = ""
+                for i in range(len(finalList)):
+                    searchResultBox.insert(tk.END,finalList[i])
+                    if i % 2 == 0:
+                        searchResultBox.itemconfig(i, {"bg": "gray20"})
 
 
     
 
 
     searchThread = threading.Thread(target=searchThreadFunc,args="")
-    searchThread.start()
+    #searchThread.start()
     searchFrame = tk.Frame(root)
     numOfFrames += 1
     searchFrame.grid(row=0,column=0)
@@ -201,7 +191,7 @@ def setup():
 
     searchBox = tk.Entry(searchFrame,width=20)
     searchBox.grid(row=0,column=1)
-
+    searchBox.bind("<Key>",searchThreadFunc)
 
     searchHeaderData = ""
     data = openDoc()
@@ -273,22 +263,22 @@ def setup():
     submitButton.image = submitButtonImg.buttonPic
     submitButton.grid(row=7,column=2)
 
-    searchResultBox.bind('<Double-Button-1>',lambda eff: getDetails(searchResultBox.get(searchResultBox.curselection()),searchResultBox,searchFrame,addFrame))
-    buttons(searchFrame,searchResultBox,addFrame)
+    searchResultBox.bind('<Double-Button-1>',lambda eff: getDetails(searchResultBox.get(searchResultBox.curselection()),searchResultBox,searchFrame,addFrame,"OOF"))
+    buttons(searchFrame,searchResultBox,addFrame,5)
 
 
 def bugReport():
     webbrowser.open("https://docs.google.com/forms/d/e/1FAIpQLSeJ7VBd0OkONfw9PMq4C4dx7BhxgOXACpDsVKdUTAT7ICWApg/viewform?usp=sf_link")
 
 
-def buttons(frame,searchBox,addFrame):
+def buttons(frame,searchBox,addFrame,filterMain):
     deleteButtonImg = makeButtonImg(text="X",bg=[255,0,0],height=20,length=30,yOffset=-2)
     deleteButton = tk.Button(frame,relief="flat",image=deleteButtonImg.buttonPic,command=lambda :deleteInit(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
     deleteButton.image = deleteButtonImg.buttonPic
     deleteButton.grid(row=4,column=0)
 
     detailButtonImg = makeButtonImg(height=35,length=85,text="Details",bg=[64,64,64],textSize=15,yOffset=.7)
-    detailButton = tk.Button(frame,relief="flat",image=detailButtonImg.buttonPic,height=35,width=85,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame))
+    detailButton = tk.Button(frame,relief="flat",image=detailButtonImg.buttonPic,height=35,width=85,command=lambda : getDetails(searchBox.get(searchBox.curselection()),searchBox,frame,addFrame,filterMain))
     detailButton.image = detailButtonImg.buttonPic
 
     detailButton.grid(row=4,column=4)
@@ -373,7 +363,7 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,addFrame):
 
 
 
-def getDetails(line,searchResultBox,frame,addFrame):
+def getDetails(line,searchResultBox,frame,addFrame,filterMain):
     global numOfFrames, quitThread, searchState
     quitThread = True
     indexToRead = ""
@@ -499,19 +489,21 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     backButton = tk.Button(newDetailFrame,relief="flat",image=backButtonImg.buttonPic,height=30,width=80,command=back)
     backButton.image = backButtonImg.buttonPic
     backButton.grid(row=1, column=0,stick=tk.W)
-    checkButtonVarIn = 0
+    checkButtonVarIn = 1
     checkButtonVarOut = 0
     num = 1
     if "State" in line:
-        checkInCheckButton = tk.Checkbutton(newDetailFrame,text="Check In",variable=checkButtonVarIn,command=lambda:checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,True))
+        checkInCheckButton = tk.Checkbutton(newDetailFrame,text="Check In",selectcolor="gray13",variable=checkButtonVarIn,command=lambda:checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,True))
         checkInCheckButton.grid(row=1,column=115,sticky=tk.E,columnspan=num)
-        checkOutCheckButton = tk.Checkbutton(newDetailFrame,text="Check Out",variable=checkButtonVarOut,command=lambda:checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,True))
+        checkOutCheckButton = tk.Checkbutton(newDetailFrame,text="Check Out",variable=checkButtonVarOut,selectcolor="gray13",command=lambda:checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,True))
         checkOutCheckButton.grid(row=1,column=116,columnspan=num,sticky=tk.E)
     else:
-        checkInCheckButton = tk.Checkbutton(newDetailFrame,text="Check In",variable=checkButtonVarIn,command=lambda:checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False))
+        checkInCheckButton = tk.Checkbutton(newDetailFrame)
+        checkInCheckButton = tk.Checkbutton(newDetailFrame,text="Check In",selectcolor="gray13",variable=checkButtonVarIn,command=lambda:checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False))
         checkInCheckButton.grid(row=1,column=115,sticky=tk.E,columnspan=num)
-        checkOutCheckButton = tk.Checkbutton(newDetailFrame,text="Check Out",variable=checkButtonVarOut,command=lambda:checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False))
+        checkOutCheckButton = tk.Checkbutton(newDetailFrame,text="Check Out",variable=checkButtonVarOut,selectcolor="gray13",command=lambda:checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False))
         checkOutCheckButton.grid(row=1,column=116,columnspan=num,sticky=tk.E)
+        
 
     data = openDoc()
 
