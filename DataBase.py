@@ -5,7 +5,12 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import tkinter as tk
-#hi
+#
+#
+debug = False
+#
+#
+
 class makeButtonImg:
     def __init__(self,text="",length=50,height=50,bg=[255,0,0],fg=[255,255,255],tc="",textSize=15,yOffset=1,xOffset=1):
         print(length)
@@ -26,26 +31,20 @@ class makeButtonImg:
             buttonImgDraw = ImageDraw.Draw(buttonImg)
             tL,tH = buttonImgDraw.textsize(text,font=font)
             print("Text Length: ",tL)
-            #if tL > length:
-            #    font = ImageFont.truetype("C:/Windows/Fonts/ariblk.ttf",int(length/4))
-            #    tL,tH = buttonImgDraw.textsize(text,font=font)
-            #    buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(14/16)),text,(tc[0],tc[1],tc[2]),font=font)
-            #else:
-            #    buttonImgDraw.text(((length - tL)/2,int((height - tH)/2)*(45/16)),text,(tc[0],tc[1],tc[2]),font=font)
             print(tH)
-            #buttonImg.show()
             buttonImgDraw.text((int(xOffset*(length - tL)/2),int((height - tH)/2)*yOffset),text,(tc[0],tc[1],tc[2]),font=font)
             buttonImg.save("Assets/temp/"+fileName,"PNG")
         self.buttonPic = tk.PhotoImage(file="Assets/temp/"+fileName)
 
-numOfFrames = 0
 
+numOfFrames = 0
+font = ImageFont.truetype("Assets/Fonts/ariblk.ttf",int(20))
 
 root=tk.Tk()
 #root.tk_setPalette(background='gray15', foreground='white', activeForeground="red")
 button_pic_1 = tk.PhotoImage(file="Assets/buttonTexRaw.png")
 
-root.tk_setPalette(background='gray13', foreground='white',activeBackground='black', activeForeground="red")
+root.tk_setPalette(background='gray13', foreground='white',activeBackground='black', activeForeground="gray")
 
 root.resizable(False,False)
 if os.name ==  "nt":
@@ -54,6 +53,7 @@ if os.name == "mac":
     pass
 root.title("CPA Data Base")
 quitThread = False
+
 
 
 def openDoc():
@@ -67,6 +67,19 @@ def openDoc():
 
 def addItem(itemName,itemID,itemQuant,searchResultBox,searchFrame,addFrame):
     global numOfFrames
+    entryList = [itemName,itemID,itemQuant]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
+    try:
+        if int(itemQuant) <= 0:
+            messagebox.showwarning("Invalid Quantity","You Must Use an Integer Greater Than 0")
+            return
+    except:
+        messagebox.showwarning("Invalid Quantity","You Must Use an Integer Greater Than 0")
+        return
+
     writeData = ""
     data = openDoc()
     data[0].append(itemName)
@@ -92,56 +105,86 @@ def devider(frame,row,column):
     devider = tk.Label(frame)
     devider.grid(row=row,column=column,columnspan=2)
 
-def searchSetup(frame):
-    def searchSelect(evt):
-                value = searchResultBox.get(searchResultBox.curselection())
-    searchResultBox = tk.Listbox(frame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
-    searchResultBox.grid(row=2,columnspan=100)
+def searchSelector(frame,searchResultBox,choice):
+    print(choice.get())
+    if choice.get() == "All Items":
+        searchSetup(frame)
+    if choice.get() == "Location":
+        searchPlace(frame,searchResultBox)
+
+
+def searchPlace(frame,searchResultBox):
+    locations = []
     data = openDoc()
-    formatSearchBox(data,searchResultBox)
-    searchResultBox.bind('<<ListboxSelect>>', searchSelect)
-    return searchResultBox
+    quitFlag = False
+    if len(data[5]) > 1:
+        for i in range(1,len(data[5])):
+            data[5][i] = data[5][i].split("%")
+    #[5][4]
+    searchResultBox.delete(0,"end")
+    #Getting all locations
+    for i in range(1,len(data[5])):
+        quitFlag = False
+        for j in range(len(locations)):
+            if data[5][i][4] == locations[j]:
+                quitFlag = True
+        if quitFlag == False:
+            locations.append(str(data[5][i][4]))
+            searchResultBox.insert(tk.END,locations[len(locations)-1])
+
+
+
+
+def searchSetup(frame):
+    pass
 
 def setup():
-    global numOfFrames
-    global quitThread
+
+    global numOfFrames, quitThread, searchState, var
+    searchState = "All Items"
     quitThread = False
     def searchThreadFunc():
-        global quitThread
+        global quitThread, searchState, var
+        pause = False
         data = openDoc()
         new = ""
         finalList = []
         while quitThread == False:
             time.sleep(.1)
-            try:
-                userSearch = str(searchBox.get())
-            except:
-                break
-            boxString = ""
-            old = new
-            new = userSearch
-            if new != old:
-                if userSearch == "":
-                    searchResultBox.delete(0,"end")
-                    formatSearchBox(data,searchResultBox)
-                else:
-                    searchResultBox.delete(0,"end")
-                    boxString = ""
-                    for i in range(1,len(data[0])):
-                        for j in range(len(data)-2):
-                            boxString += data[j][i].strip("\n")
-                            if j != 3:
-                                for k in range(30-len(str(data[j][i]))):
-                                    boxString += " "
-                        if userSearch.upper() in boxString.upper():
-                            finalList.append(boxString)
-                            #searchResultBox.insert(END,boxString)
+            if var.get() == "All Items":
+                print("Threading")
+                try:
+                    userSearch = str(searchBox.get())
+                except:
+                    break
+                boxString = ""
+                old = new
+                new = userSearch
+                if new != old or pause == True:
+                    if userSearch == "":
+                        searchResultBox.delete(0,"end")
+                        formatSearchBox(data,searchResultBox)
+                    else:
+                        searchResultBox.delete(0,"end")
                         boxString = ""
-                    for i in range(len(finalList)):
-                        searchResultBox.insert(tk.END,finalList[i])
-                        if i % 2 == 0:
-                            searchResultBox.itemconfig(i, {"bg": "gray20"})
-                    finalList = []
+                        for i in range(1,len(data[0])):
+                            for j in range(len(data)-2):
+                                boxString += data[j][i].strip("\n")
+                                if j != 3:
+                                    for k in range(30-len(str(data[j][i]))):
+                                        boxString += " "
+                            if userSearch.upper() in boxString.upper():
+                                finalList.append(boxString)
+                                #searchResultBox.insert(END,boxString)
+                            boxString = ""
+                        for i in range(len(finalList)):
+                            searchResultBox.insert(tk.END,finalList[i])
+                            if i % 2 == 0:
+                                searchResultBox.itemconfig(i, {"bg": "gray20"})
+                        finalList = []
+                pause = False
+            else:
+                pause = True
 
 
     
@@ -159,15 +202,39 @@ def setup():
     searchBox = tk.Entry(searchFrame,width=20)
     searchBox.grid(row=0,column=1)
 
+
     searchHeaderData = ""
     data = openDoc()
+    if len(data[5]) > 1:
+        for i in range(1,len(data[5])):
+            data[5][i] = data[5][i].split("%")
+
     for i in range(0,len(data)-2):
         searchHeaderData += data[i][0]
         for j in range(25-len(data[i][0])):
             searchHeaderData += " "
+
     searchHeader = tk.Label(searchFrame,text=searchHeaderData,font='TkFixedFont')
     searchHeader.grid(row=1,column=0,columnspan=20)
-    searchResultBox = searchSetup(searchFrame)
+    def searchSelect(evt):
+                value = searchResultBox.get(searchResultBox.curselection())
+    searchResultBox = tk.Listbox(searchFrame,relief="flat",width=100,height=30,font='TkFixedFont',selectbackground="gray30",highlightcolor="gray15",bg="gray10",selectmode="SINGLE",bd=1)
+    searchResultBox.grid(row=2,columnspan=100)
+    data = openDoc()
+    formatSearchBox(data,searchResultBox)
+    searchResultBox.bind('<<ListboxSelect>>', searchSelect)
+
+    var = tk.StringVar(root)
+    var.set("All Items")
+    searchOptions = tk.OptionMenu(searchFrame,var,"All Items","Location",command=lambda x:searchSelector(searchFrame,searchResultBox,var))
+    font = "Assets/Fonts/ariblk.ttf"
+    if os.name == "nt":
+        searchOptions.config(fg="black",bg="white",relief="flat",font=(font,10))
+        searchOptions["menu"].config(fg="black",bg="white",relief="flat",font=(font,10))
+    searchOptions.grid(row=0,column=3,sticky=tk.W)
+
+    searchOptionLabel = tk.Label(searchFrame,text="Search By: ")
+    searchOptionLabel.grid(row=0,column=2,sticky=tk.E)
 
     data = openDoc()
 
@@ -229,11 +296,24 @@ def buttons(frame,searchBox,addFrame):
 #flat, groove, raised, ridge, solid, or sunken
 
 def formatSearchBox(data,box):
+    if len(data[5]) > 1:
+        for i in range(1,len(data[5])):
+            data[5][i] = data[5][i].split("%")
+    for i in range(1,len(data[1])):
+        data[2][i] = 0 
+        data[3][i] = 0
+        for j in range(1,len(data[5])):
+            if data[5][j][0] == data[1][i]:
+                
+                if data[5][j][1] == "}out{":
+                    data[3][i] += int(data[5][j][7])
+                else:
+                    data[2][i] += int(data[5][j][7])
     finalList = []
     boxString = ""
     for i in range(1,len(data[0])):
         for j in range(len(data)-2):
-            boxString += data[j][i].strip("\n")
+            boxString += str(data[j][i]).strip("\n")
             if j != 3:
                 for k in range(30-len(str(data[j][i]))):
                     boxString += " "
@@ -292,9 +372,9 @@ def deleteing(yOrN,indexValueToDel,searchResultBox,searchFrame,addFrame):
 
 
 
+
 def getDetails(line,searchResultBox,frame,addFrame):
-    global numOfFrames
-    global quitThread
+    global numOfFrames, quitThread, searchState
     quitThread = True
     indexToRead = ""
     text = line
@@ -345,9 +425,10 @@ def getDetails(line,searchResultBox,frame,addFrame):
     backButton.image = backButtonImg
     backButton.grid(row=1,column=0)
     nameString = data[0][indexToRead]
-
-    nameLabel = tk.Label(detailFrame,text=nameString,font=("Comic Sans MS", 20))
-    nameLabel.grid(row=1,column=50-(len(nameString)//2))
+    itemID = data[1][indexToRead]
+    oof = ImageFont.truetype("Assets/Fonts/ariblk.ttf",int(20))
+    nameLabel = tk.Label(detailFrame,text=nameString,font=("Assets/Fonts/ariblk.ttf",20))
+    nameLabel.grid(row=1,column=48-(len(nameString)//2))
 
     numChecked = 0
 
@@ -359,7 +440,7 @@ def getDetails(line,searchResultBox,frame,addFrame):
     for i in range(50-len(boxString)):
         boxString += " "
     for i in range(1,len(data[5])):
-        if data[5][i][1] == "}in{":
+        if data[5][i][1] == "}in{" and data[5][i][0] == itemID:
             numChecked += int(data[5][i][7])
     boxString += str(numChecked)
     detailBox.insert(tk.END,boxString)
@@ -371,7 +452,7 @@ def getDetails(line,searchResultBox,frame,addFrame):
     for i in range(50-len(boxString)):
         boxString += " "
     for i in range(1,len(data[5])):
-        if data[5][i][1] == "}out{":
+        if data[5][i][1] == "}out{"and data[5][i][0] == itemID:
             numChecked += int(data[5][i][7])
     boxString += str(numChecked)
     detailBox.insert(tk.END,boxString)
@@ -418,12 +499,24 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     backButton = tk.Button(newDetailFrame,relief="flat",image=backButtonImg.buttonPic,height=30,width=80,command=back)
     backButton.image = backButtonImg.buttonPic
     backButton.grid(row=1, column=0,stick=tk.W)
+    checkButtonVarIn = 0
+    checkButtonVarOut = 0
+    num = 1
+    if "State" in line:
+        checkInCheckButton = tk.Checkbutton(newDetailFrame,text="Check In",variable=checkButtonVarIn,command=lambda:checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,True))
+        checkInCheckButton.grid(row=1,column=115,sticky=tk.E,columnspan=num)
+        checkOutCheckButton = tk.Checkbutton(newDetailFrame,text="Check Out",variable=checkButtonVarOut,command=lambda:checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,True))
+        checkOutCheckButton.grid(row=1,column=116,columnspan=num,sticky=tk.E)
+    else:
+        checkInCheckButton = tk.Checkbutton(newDetailFrame,text="Check In",variable=checkButtonVarIn,command=lambda:checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False))
+        checkInCheckButton.grid(row=1,column=115,sticky=tk.E,columnspan=num)
+        checkOutCheckButton = tk.Checkbutton(newDetailFrame,text="Check Out",variable=checkButtonVarOut,command=lambda:checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False))
+        checkOutCheckButton.grid(row=1,column=116,columnspan=num,sticky=tk.E)
 
     data = openDoc()
 
     nameString = data[0][indexToRead]
-
-    nameLabel = tk.Label(newDetailFrame,text=nameString,font=("Comic Sans MS", 20))
+    nameLabel = tk.Label(newDetailFrame,text=nameString,font=("Assets/Fonts/ariblk.ttf", 20))
     nameLabel.grid(row=1,column=50-(len(nameString)//2))
     returnDefaultButtonImg = makeButtonImg(text="Reset Items",height=20,length=110,yOffset=-1,bg=[255,0,0])
     returnDefaultButton = tk.Button(newDetailFrame,relief="flat",image=returnDefaultButtonImg.buttonPic, fg="red")
@@ -439,12 +532,14 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
     #Header----------------------------------------------------
     
 #21 character in each
-
+    checkInFrame = tk.Frame(root)
+    numOfFrames += 1
+    checkInFrame.grid(row=0,column=2,columnspan=20)
     boxString = ""
     if "out" in line:
         detailBox = tk.Listbox(newDetailFrame, relief="solid", width=115, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
         detailBox.grid(row=3, columnspan=100)
-        headerString = "Signed Out By" + "        "+"Person Responsible"+ "   "+"Where It Is"+"          "+temp+tempSpace+"Time Due"+"             "+"Quantity"
+        headerString = "Signed Out By" + "        "+"Person Responsible"+ "   "+"Location"+"             "+temp+tempSpace+"Time Due"+"             "+"Quantity"
         headerLabel = tk.Label(newDetailFrame,text=headerString,font='TkFixedFont')
         headerLabel.grid(row=2,columnspan=100,sticky=tk.W)    
 
@@ -474,31 +569,6 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 boxString = ""
                 counter += 1
         #------------------------------
-        checkInFrame = tk.Frame(root)
-        numOfFrames += 1
-        checkInFrame.grid(row=0,column=2)
-        titleLabel = tk.Label(checkInFrame,text="Check In Item(s)")
-        titleLabel.grid(row=0,column=0)
-        devider(checkInFrame,1,0)
-
-        techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) In")
-        techLabel.grid(row=2,column=0)
-        techEntry = tk.Entry(checkInFrame)
-        techEntry.grid(row=3,column=0)
-        devider(checkInFrame,4,0)
-
-
-        whereLabel = tk.Label(checkInFrame,text="Item Location")
-        whereLabel.grid(row=8,column=0)
-        whereEntry = tk.Entry(checkInFrame)
-        whereEntry.grid(row=9,column=0)
-        devider(checkInFrame,10,0)
-
-        timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
-        timePunchLabel.grid(row=11,column=0)
-        timePunchEntry = tk.Entry(checkInFrame)
-        timePunchEntry.grid(row=12,column=0)
-        devider(checkInFrame,13,0)
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
 
@@ -525,11 +595,9 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
         devider(quantFrame,2,1)
         submitCurrentQuant.grid(row=3,column=1,rowspan=2)
-        finishedButtonImg = makeButtonImg(text="Check In",length=90,height=30,bg=[64,64,64])
-        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
-        finishedButton.image = finishedButtonImg.buttonPic
-        finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
+
+        checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False)
     elif "in" in line:
 
 
@@ -540,7 +608,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
 #
         detailBox = tk.Listbox(newDetailFrame, relief="solid", width=80, height=30, font='TkFixedFont',selectbackground="gray30",highlightcolor="black")
         detailBox.grid(row=3, columnspan=100)
-        headerString = "Signed Out By" +"        "+"Where It Is"+"          "+temp+tempSpace+"Quantity"
+        headerString = "Signed In By" +"         "+"Location"+"             "+temp+tempSpace+"Quantity"
         headerLabel = tk.Label(newDetailFrame,text=headerString,font='TkFixedFont')
         headerLabel.grid(row=2,columnspan=100,sticky=tk.W)
         data = openDoc()
@@ -571,42 +639,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
                 detailList.append(boxString)
                 boxString = ""
         #------------------------------
-        checkInFrame = tk.Frame(root)
-        numOfFrames += 1
-        checkInFrame.grid(row=0,column=2)
-        titleLabel = tk.Label(checkInFrame,text="Check Out Item(s)")
-        titleLabel.grid(row=0,column=0)
-        devider(checkInFrame,1,0)
-
-        techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) out")
-        techLabel.grid(row=2,column=0)
-        techEntry = tk.Entry(checkInFrame)
-        techEntry.grid(row=3,column=0)
-        devider(checkInFrame,4,0)
-
-        personLabel = tk.Label(checkInFrame,text="Person Responsible For Item(s)")
-        personLabel.grid(row=5,column=0)
-        personEntry = tk.Entry(checkInFrame)
-        personEntry.grid(row=6,column=0)
-        devider(checkInFrame,7,0)
-
-        whereLabel = tk.Label(checkInFrame,text="Item Location")
-        whereLabel.grid(row=8,column=0)
-        whereEntry = tk.Entry(checkInFrame)
-        whereEntry.grid(row=9,column=0)
-        devider(checkInFrame,10,0)
-
-        timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
-        timePunchLabel.grid(row=11,column=0)
-        timePunchEntry = tk.Entry(checkInFrame)
-        timePunchEntry.grid(row=12,column=0)
-        devider(checkInFrame,13,0)
-
-        timeDueLabel = tk.Label(checkInFrame,text="Time Item(s) are Due")
-        timeDueLabel.grid(row=14,column=0)
-        timeDueEntry = tk.Entry(checkInFrame)
-        timeDueEntry.grid(row=15,column=0)
-        devider(checkInFrame,16,0)
+        
 
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
@@ -632,11 +665,8 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
         devider(quantFrame,2,1)
         submitCurrentQuant.grid(row=3,column=1,rowspan=2)
-        finishedButtonImg = makeButtonImg(text="Check Out",length=90,height=30,bg=[64,64,64])
-        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
-        finishedButton.image = finishedButtonImg.buttonPic
-        finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
+        checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,False)
 
     else:
 
@@ -663,42 +693,7 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         boxString = ""
 
         #------------------------------
-        checkInFrame = tk.Frame(root)
-        numOfFrames += 1
-        checkInFrame.grid(row=0,column=2)
-        titleLabel = tk.Label(checkInFrame,text="Check Out Item(s)")
-        titleLabel.grid(row=0,column=0)
-        devider(checkInFrame,1,0)
 
-        techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) out")
-        techLabel.grid(row=2,column=0)
-        techEntry = tk.Entry(checkInFrame)
-        techEntry.grid(row=3,column=0)
-        devider(checkInFrame,4,0)
-
-        personLabel = tk.Label(checkInFrame,text="Person Responsible For Item(s)")
-        personLabel.grid(row=5,column=0)
-        personEntry = tk.Entry(checkInFrame)
-        personEntry.grid(row=6,column=0)
-        devider(checkInFrame,7,0)
-
-        whereLabel = tk.Label(checkInFrame,text="Item Location")
-        whereLabel.grid(row=8,column=0)
-        whereEntry = tk.Entry(checkInFrame)
-        whereEntry.grid(row=9,column=0)
-        devider(checkInFrame,10,0)
-
-        timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
-        timePunchLabel.grid(row=11,column=0)
-        timePunchEntry = tk.Entry(checkInFrame)
-        timePunchEntry.grid(row=12,column=0)
-        devider(checkInFrame,13,0)
-
-        timeDueLabel = tk.Label(checkInFrame,text="Time Item(s) are Due")
-        timeDueLabel.grid(row=14,column=0)
-        timeDueEntry = tk.Entry(checkInFrame)
-        timeDueEntry.grid(row=15,column=0)
-        devider(checkInFrame,16,0)
 
 
         #Choose Quantity Code------------------------------------------------------------------------------------------------
@@ -724,14 +719,91 @@ TIme stamp, time due, Where is it, person responsible, tech signed out, quantity
         submitCurrentQuant.image = submitCurrentQuantImg.buttonPic
         devider(quantFrame,2,1)
         submitCurrentQuant.grid(row=3,column=1,rowspan=2)
-        finishedButtonImg = makeButtonImg(text="Check In",length=90,height=30,bg=[64,64,64])
-        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
-        finishedButton.image = finishedButtonImg.buttonPic
-        finishedButton.grid()
         detailBox.bind("<Double-Button-1>",lambda eff:selectItemToQuant(detailBox,detailList,quantListBox,detailBox.get(detailBox.curselection()),quantList,indexList))
 
+        checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,True)
+def checkOutForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,DS):
+    widgets = checkInFrame.winfo_children()
+    for i in range(len(widgets)):
+        widgets[i].grid_forget()
+    titleLabel = tk.Label(checkInFrame,text="Check Out Item(s)")
+    titleLabel.grid(row=0,column=0)
+    devider(checkInFrame,1,0)
+
+    techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) out")
+    techLabel.grid(row=2,column=0)
+    techEntry = tk.Entry(checkInFrame)
+    techEntry.grid(row=3,column=0)
+    devider(checkInFrame,4,0)
+
+    personLabel = tk.Label(checkInFrame,text="Person Responsible For Item(s)")
+    personLabel.grid(row=5,column=0)
+    personEntry = tk.Entry(checkInFrame)
+    personEntry.grid(row=6,column=0)
+    devider(checkInFrame,7,0)
+
+    whereLabel = tk.Label(checkInFrame,text="Item Location")
+    whereLabel.grid(row=8,column=0)
+    whereEntry = tk.Entry(checkInFrame)
+    whereEntry.grid(row=9,column=0)
+    devider(checkInFrame,10,0)
+
+    timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
+    timePunchLabel.grid(row=11,column=0)
+    timePunchEntry = tk.Entry(checkInFrame)
+    timePunchEntry.grid(row=12,column=0)
+    devider(checkInFrame,13,0)
+
+    timeDueLabel = tk.Label(checkInFrame,text="Time Item(s) are Due")
+    timeDueLabel.grid(row=14,column=0)
+    timeDueEntry = tk.Entry(checkInFrame)
+    timeDueEntry.grid(row=15,column=0)
+    devider(checkInFrame,16,0)
+        
+    finishedButtonImg = makeButtonImg(text="Check Out",length=90,height=30,bg=[64,64,64])
+    if DS == True:
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitOutDS(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+
+    else:  
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitOut(detailBox,quantListBox,quantList,"out",techEntry,personEntry,timeDueEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+    finishedButton.image = finishedButtonImg.buttonPic
+    finishedButton.grid()
 
 
+def checkInForm(checkInFrame,detailBox,quantListBox,quantList,data,indexToRead,indexList,quantFrame,newDetailFrame,DS):
+    widgets = checkInFrame.winfo_children()
+    for i in range(len(widgets)):
+        widgets[i].grid_forget()
+    titleLabel = tk.Label(checkInFrame,text="Check In Item(s)")
+    titleLabel.grid(row=0,column=0)
+    devider(checkInFrame,1,0)
+
+    techLabel = tk.Label(checkInFrame,text="Tech Checking Item(s) In")
+    techLabel.grid(row=2,column=0)
+    techEntry = tk.Entry(checkInFrame)
+    techEntry.grid(row=3,column=0)
+    devider(checkInFrame,4,0)
+
+
+    whereLabel = tk.Label(checkInFrame,text="Item Location")
+    whereLabel.grid(row=8,column=0)
+    whereEntry = tk.Entry(checkInFrame)
+    whereEntry.grid(row=9,column=0)
+    devider(checkInFrame,10,0)
+
+    timePunchLabel = tk.Label(checkInFrame,text="Time of Action")
+    timePunchLabel.grid(row=11,column=0)
+    timePunchEntry = tk.Entry(checkInFrame)
+    timePunchEntry.grid(row=12,column=0)
+    devider(checkInFrame,13,0)
+
+    finishedButtonImg = makeButtonImg(text="Check In",length=90,height=30,bg=[64,64,64])
+    if DS == False:
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitIn(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+    else:
+        finishedButton = tk.Button(checkInFrame,image=finishedButtonImg.buttonPic,command=lambda : finalSubmitInDS(detailBox,quantListBox,quantList,"out",techEntry,timePunchEntry,data[1][indexToRead],data,whereEntry,indexList,quantFrame,newDetailFrame,checkInFrame))
+    finishedButton.image = finishedButtonImg.buttonPic
+    finishedButton.grid()
         
  
 def selectItemToQuant(detailBox,detailList,quantBox,userSelect,quantList,indexList):
@@ -765,6 +837,11 @@ def insertQuantToSelection(quantBox,quantEntry,quantList):
 # |item Number\Checked in or out\what tech\person responsible\where is it\time punch\time due\quantity|
 def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     indexToDel = []
+    entryList = [who.get(),person.get(),timeDue.get(),timePunch.get(),where.get()]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
     #Getting indexes
     for i in range(len(quantList)):
         for j in range(detailBox.size()):
@@ -773,10 +850,11 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
     quantList.sort(key=lambda x: x[2])
     for i in range(len(quantList)):
         if int(fixedData[5][quantList[i][2]][7]) < int(quantList[i][1]):
-            print("TOO BIG")
+            print("Too Big")
 
         elif int(fixedData[5][quantList[i][2]][7]) == int(quantList[i][1]):
             indexToDel.append(i)
+            
         else:
             fixedData[5][quantList[i][2]][7] = int(fixedData[5][quantList[i][2]][7]) - int(quantList[i][1])
     
@@ -789,7 +867,6 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
     newListEntry = [itemNumber,"}out{",who.get(),person.get(),where.get(),timePunch.get(),timeDue.get(),totalQuant]
     fixedData[5].append(newListEntry)
     fixedDataSave(fixedData)
-
     newDetailFrame.destroy()
     quantFrame.destroy()
     checkInFrame.destroy()
@@ -800,7 +877,11 @@ def finalSubmitOut(detailBox,quantBox,quantList,inout,who,person,timeDue,timePun
 
 def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     indexToDel = []
-
+    entryList = [who.get(),timePunch.get(),where.get()]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
     #Getting indexes
     #print(quantList)
     for i in range(len(quantList)):
@@ -834,8 +915,13 @@ def finalSubmitIn(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fi
     checkInFrame.destroy()
     setup()
 
-def finalSubmitDS(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
+def finalSubmitOutDS(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
     #Getting indexes
+    entryList = [who.get(),person.get(),timeDue.get(),timePunch.get(),where.get()]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
     for i in range(len(fixedData[4])):
         if fixedData[1][i] == itemNumber:
             index = i
@@ -853,10 +939,33 @@ def finalSubmitDS(detailBox,quantBox,quantList,inout,who,person,timeDue,timePunc
     quantFrame.destroy()
     checkInFrame.destroy()
     setup()
+
+def finalSubmitInDS(detailBox,quantBox,quantList,inout,who,timePunch,itemNumber,fixedData,where,indexList,quantFrame,newDetailFrame,checkInFrame):
+    #Getting indexes
+    entryList = [who.get(),timePunch.get(),where.get()]
+    for i in range(len(entryList)):
+        if "|" in str(entryList[i]) or "%" in str(entryList[i]):
+            messagebox.showwarning("Invalid Entry","You Cannot Use '|' or '%'")
+            return
+    for i in range(len(fixedData[4])):
+        if fixedData[1][i] == itemNumber:
+            index = i
+            break
+
+    if int(fixedData[4][index]) < int(quantList[0][1]):
+        print("TOO BIG")
+    else:
+        fixedData[4][index] = int(fixedData[4][index]) - int(quantList[0][1])
+    newListEntry = [itemNumber,"}in{",who.get(),"---",where.get(),timePunch.get(),"---",quantList[0][1]]
+    fixedData[5].append(newListEntry)
+    fixedDataSave(fixedData)
+
+    newDetailFrame.destroy()
+    quantFrame.destroy()
+    checkInFrame.destroy()
+    setup()
     
-
-
-
+    
 
 
 
@@ -877,15 +986,37 @@ def fixedDataSave(writeData):
     doc.write(writeString)
     doc.close()   
 
+def passwordCheck(event):
+    if passwordEntry.get() == "":
+        logInFrame.destroy()
+        setup()
+
 
 
 #Main Code
-setup()
+if debug == False:
+    logInFrame = tk.Frame(root)
+    logInFrame.grid()
+    logInLabel  = tk.Label(logInFrame,text="Log In")
+    logInFrame.grid(row=0,column=0)
 
-bugReportImg = makeButtonImg(text="Report Bug",length=100,height=30)
-bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,relief="flat",command=bugReport)
-bugReportButton.image = bugReportImg.buttonPic
-bugReportButton.grid(sticky=tk.S,column=2,row=5)
+    devider(logInFrame,0,0)
+    devider(logInFrame,0,1)
+    passwordLabel = tk.Label(logInFrame,text="Password: ")
+    passwordLabel.grid(row=1,column=0)
+    passwordEntry = tk.Entry(logInFrame,show="*")
+    passwordEntry.grid(row=1,column=1)
+    passwordEntry.bind("<Return>",passwordCheck)
+    devider(logInFrame,2,0)
+    devider(logInFrame,2,1)
+
+
+    bugReportImg = makeButtonImg(text="Report Bug",length=100,height=30)
+    bugReportButton = tk.Button(root,image=bugReportImg.buttonPic,relief="flat",command=bugReport)
+    bugReportButton.image = bugReportImg.buttonPic
+    bugReportButton.grid(sticky=tk.S,column=2,row=5)
+else:
+    setup()
 
 
 root.mainloop()
